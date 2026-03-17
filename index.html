@@ -290,6 +290,9 @@
     <div class="header-inner">
       <div class="league-title" id="leagueTitle">🎾 LIGA BDNC</div>
       <div class="header-actions">
+        <button class="btn btn-green" id="headerNewGameBtn" onclick="openModal('newGameModal')" style="display:none">
+          <i class="fas fa-plus-circle"></i> Novo Jogo
+        </button>
         <span class="role-badge" id="roleBadge"></span>
         <button class="btn btn-ghost btn-icon" onclick="doLogout()" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
       </div>
@@ -587,6 +590,10 @@
     // FAB: jogador + admin only
     const fab = document.getElementById('fabBtn');
     fab.classList.toggle('hidden', currentRole === 'viewer');
+
+    // Header button (desktop)
+    const headerBtn = document.getElementById('headerNewGameBtn');
+    if (headerBtn) headerBtn.style.display = currentRole === 'viewer' ? 'none' : '';
   }
 
   // ── FIRESTORE LISTENERS ──
