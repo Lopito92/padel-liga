@@ -290,7 +290,7 @@
     <div class="header-inner">
       <div class="league-title" id="leagueTitle">🎾 LIGA BDNC</div>
       <div class="header-actions">
-        <button class="btn btn-green" id="headerNewGameBtn" onclick="openModal('newGameModal')" style="display:none">
+        <button class="btn btn-green" id="headerNewGameBtn" id="headerNewGameBtn2" style="display:none">
           <i class="fas fa-plus-circle"></i> Novo Jogo
         </button>
         <span class="role-badge" id="roleBadge"></span>
@@ -300,7 +300,7 @@
   </div>
 
   <!-- FAB -->
-  <button class="fab" id="fabBtn" onclick="openModal('newGameModal')" title="Novo Jogo">
+  <button class="fab" id="fabBtn" id="headerNewGameBtn2" title="Novo Jogo">
     <i class="fas fa-plus"></i>
   </button>
 
@@ -462,7 +462,7 @@
     <div class="modal-handle"></div>
     <div class="modal-header">
       <span class="modal-title">⚡ Novo Jogo</span>
-      <button class="modal-close" onclick="closeModal('newGameModal')">&times;</button>
+      <button class="modal-close" id="btnCloseGameModal">&times;</button>
     </div>
     <div class="form-group">
       <label>Selecionar Jogadores (4)</label>
@@ -471,22 +471,40 @@
         <input type="text" id="estrangeiroName" placeholder="Nome do convidado">
       </div>
     </div>
-    <button class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:14px" onclick="sortearEquipas()">
-      <i class="fas fa-random"></i> Sortear Equipas
-    </button>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px">
+      <button class="btn btn-primary" id="btnSortear" style="justify-content:center">
+        <i class="fas fa-random"></i> Sortear
+      </button>
+      <button class="btn btn-ghost" id="btnManual" style="justify-content:center">
+        <i class="fas fa-hand-pointer"></i> Definir
+      </button>
+    </div>
     <div class="teams-grid" id="teamsDisplay" style="display:none;">
       <div class="team-box"><h4>Equipa 1</h4><div class="team-players" id="team1Players"></div></div>
       <div class="team-box"><h4>Equipa 2</h4><div class="team-players" id="team2Players"></div></div>
+    </div>
+    <div id="manualTeams" style="display:none; margin-bottom:14px">
+      <div class="teams-grid">
+        <div class="team-box">
+          <h4>Equipa 1</h4>
+          <div id="manualTeam1Chips" style="display:flex; flex-direction:column; gap:6px; margin-top:6px"></div>
+        </div>
+        <div class="team-box">
+          <h4>Equipa 2</h4>
+          <div id="manualTeam2Chips" style="display:flex; flex-direction:column; gap:6px; margin-top:6px"></div>
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); text-align:center; margin-top:8px">Toca num jogador para o trocar de equipa</p>
     </div>
     <div class="form-group">
       <label>Data do Jogo</label>
       <input type="date" id="gameDate">
     </div>
     <div id="setsContainer"></div>
-    <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-bottom:14px" onclick="addSet()">
+    <button class="btn btn-ghost" id="btnAddSet" style="width:100%; justify-content:center; margin-bottom:14px">
       <i class="fas fa-plus"></i> Adicionar Set
     </button>
-    <button class="btn btn-green" style="width:100%; justify-content:center; padding:14px" onclick="handleGameSubmission()">
+    <button class="btn btn-green" id="btnSubmitGame" style="width:100%; justify-content:center; padding:14px">
       <i class="fas fa-check-circle"></i> Registar Jogo
     </button>
   </div>
@@ -708,6 +726,24 @@
   // ── ENTER KEY LOGIN ──
   document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
 
+  // ── GAME MODAL BUTTON LISTENERS ──
+  // These must be inside the module so they have access to the Firebase functions
+  document.addEventListener('DOMContentLoaded', () => {});
+
+  function bindGameModalButtons() {
+    document.getElementById('btnCloseGameModal').onclick = () => closeModal('newGameModal');
+    document.getElementById('btnSortear').onclick = () => sortearEquipas();
+    document.getElementById('btnManual').onclick = () => toggleManualTeams();
+    document.getElementById('btnAddSet').onclick = () => addSet();
+    document.getElementById('btnSubmitGame').onclick = () => handleGameSubmission();
+    const h2 = document.getElementById('headerNewGameBtn');
+    if (h2) h2.onclick = () => openModal('newGameModal');
+    const h3 = document.getElementById('headerNewGameBtn2');
+    if (h3) h3.onclick = () => openModal('newGameModal');
+  }
+  // Bind immediately and also after auth loads
+  bindGameModalButtons();
+
   // ── CONFIG ──
   window.saveConfig = async () => {
     if (currentRole !== 'admin') return;
@@ -883,7 +919,7 @@
     addSet();
   }
 
-  window.addSet = () => {
+  function addSet() {
     setCount++;
     const div = document.createElement('div');
     div.className = 'set-container';
@@ -904,7 +940,7 @@
     return '<option value="">–</option>' + [0,1,2,3,4,5,6,7].map(n => `<option value="${n}">${n}</option>`).join('');
   }
 
-  window.removeSet = (btn) => {
+  window.removeSet = function(btn) {
     if (setCount <= 1) { toast('Não podes remover o último set.', 'warning'); return; }
     btn.closest('.set-container').remove();
     setCount--;
@@ -917,7 +953,7 @@
   };
 
   // ── SORTEAR ──
-  window.sortearEquipas = () => {
+  function sortearEquipas() {
     if (selectedPlayers.length !== 4) { toast('Seleciona exatamente 4 jogadores.', 'warning'); return; }
     const shuffled = [...selectedPlayers].sort(() => Math.random() - 0.5);
     currentTeam1 = shuffled.slice(0,2).sort();
@@ -925,13 +961,63 @@
     document.getElementById('team1Players').innerHTML = currentTeam1.join('<br>');
     document.getElementById('team2Players').innerHTML = currentTeam2.join('<br>');
     document.getElementById('teamsDisplay').style.display = 'grid';
+    document.getElementById('manualTeams').style.display = 'none';
     teamsDrawn = true;
+  }
+
+  // ── MANUAL TEAMS ──
+  let manualTeam1 = [], manualTeam2 = [];
+
+  function toggleManualTeams() {
+    if (selectedPlayers.length !== 4) { toast('Seleciona exatamente 4 jogadores.', 'warning'); return; }
+    document.getElementById('teamsDisplay').style.display = 'none';
+    const el = document.getElementById('manualTeams');
+    if (el.style.display === 'none') {
+      // Init: first 2 in team1, last 2 in team2
+      manualTeam1 = [...selectedPlayers].slice(0,2);
+      manualTeam2 = [...selectedPlayers].slice(2);
+      renderManualTeams();
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  function renderManualTeams() {
+    const t1El = document.getElementById('manualTeam1Chips');
+    const t2El = document.getElementById('manualTeam2Chips');
+    const chipStyle = 'background:var(--surface3,#282828);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:13px;font-weight:600;text-align:center;transition:all 0.2s;';
+    t1El.innerHTML = manualTeam1.map(p =>
+      `<div style="${chipStyle}" onclick="swapPlayer('${p}',1)">${p} <span style="color:var(--muted);font-size:11px">trocar ></span></div>`
+    ).join('');
+    t2El.innerHTML = manualTeam2.map(p =>
+      `<div style="${chipStyle}" onclick="swapPlayer('${p}',2)">${p} <span style="color:var(--muted);font-size:11px">trocar ></span></div>`
+    ).join('');
+    // Update currentTeam for submission
+    currentTeam1 = [...manualTeam1].sort();
+    currentTeam2 = [...manualTeam2].sort();
+    teamsDrawn = true;
+  }
+
+  window.swapPlayer = (player, fromTeam) => {
+    if (fromTeam === 1) {
+      const idx1 = manualTeam1.indexOf(player);
+      const swapWith = manualTeam2[0];
+      manualTeam1[idx1] = swapWith;
+      manualTeam2[0] = player;
+    } else {
+      const idx2 = manualTeam2.indexOf(player);
+      const swapWith = manualTeam1[0];
+      manualTeam2[idx2] = swapWith;
+      manualTeam1[0] = player;
+    }
+    renderManualTeams();
   };
 
   // ── SUBMIT GAME ──
-  window.handleGameSubmission = async () => {
+  async function handleGameSubmission() {
     if (currentRole === 'viewer') { toast('Não tens permissão.', 'error'); return; }
-    if (!teamsDrawn) { toast('Sorteias as equipas primeiro.', 'warning'); return; }
+    if (!teamsDrawn) { toast('Sorteia ou define as equipas primeiro.', 'warning'); return; }
 
     const containers = document.querySelectorAll('.set-container');
     let t1Score = 0, t2Score = 0, setScores = [], valid = true;
