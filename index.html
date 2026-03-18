@@ -442,9 +442,17 @@ function rebuildStats(games){
 }
 function renderAll(){updateGameHistoryDisplay();updateRanking();updatePairsRanking();updateH2HTable();updatePH2HTable();updateDashboard();}
 
-// Avatars (stored as base64 in firestore)
+// Avatars — each player stored in separate doc to avoid 1MB limit
 async function loadAvatars(){
-  try{const s=await getDoc(doc(db,"data","avatars"));if(s.exists())AVT=s.data()||{};updateHeaderAvatar();}catch(e){}
+  try{
+    // Load avatars for current players
+    AVT={};
+    await Promise.all(PLY.map(async p=>{
+      try{const s=await getDoc(doc(db,"avatars",p));if(s.exists())AVT[p]=s.data().url;}catch(e){}
+    }));
+    updateHeaderAvatar();
+    updatePlayersAdminList();
+  }catch(e){}
 }
 function avatarHtml(name,sz=24){
   const url=AVT[name];
@@ -486,9 +494,35 @@ function openProfileModal(){
   if(!myPlayer){document.getElementById("avatarPreviewWrap").insertAdjacentHTML("afterend","<p id='noPlayerMsg' style='font-size:12px;color:var(--muted);text-align:center;margin-top:8px'>Sem jogador associado. Pede ao admin para te associar.</p>");}
   openModal("profileModal");
 }
-document.getElementById("avatarInput").addEventListener("change",function(){
+// Compress image to max 200KB before storing
+function compressImage(file,maxKB=200){
+  return new Promise(res=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      const canvas=document.createElement("canvas");
+      let w=img.width,h=img.height;
+      // Scale down if too large
+      const maxPx=600;
+      if(w>maxPx||h>maxPx){const r=Math.min(maxPx/w,maxPx/h);w=Math.round(w*r);h=Math.round(h*r);}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      // Try quality levels until under maxKB
+      let q=0.8,data="";
+      do{data=canvas.toDataURL("image/jpeg",q);q-=0.1;}while(data.length>maxKB*1024*1.37&&q>0.2);
+      res(data);
+    };
+    img.src=url;
+  });
+}
+
+document.getElementById("avatarInput").addEventListener("change",async function(){
   const f=this.files[0];if(!f)return;
-  const r=new FileReader();r.onload=e=>document.getElementById("avatarPreviewWrap").innerHTML=`<img src="${e.target.result}" class="avatar-preview">`;r.readAsDataURL(f);
+  const compressed=await compressImage(f);
+  document.getElementById("avatarPreviewWrap").innerHTML=`<img src="${compressed}" class="avatar-preview">`;
+  // Store compressed version for save
+  this._compressed=compressed;
 });
 document.getElementById("btnSaveProfile").onclick=async()=>{
   const f=document.getElementById("avatarInput").files[0];
@@ -505,8 +539,12 @@ document.getElementById("btnSaveProfile").onclick=async()=>{
       const renameInTeam=arr=>arr.map(p=>p===myPlayer?newName:p);
       const newGames=GH.map(g=>({...g,team1:renameInTeam(g.team1),team2:renameInTeam(g.team2)}));
       await setDoc(doc(db,"data","games"),{list:newGames});
-      // 3. Rename in avatars
-      if(AVT[myPlayer]){const ua={...AVT,[newName]:AVT[myPlayer]};delete ua[myPlayer];await setDoc(doc(db,"data","avatars"),ua);AVT=ua;}
+      // 3. Rename in avatars — copy to new doc, delete old
+      if(AVT[myPlayer]){
+        await setDoc(doc(db,"avatars",newName),{url:AVT[myPlayer]});
+        try{await setDoc(doc(db,"avatars",myPlayer),{deleted:true});}catch(e){}
+        AVT[newName]=AVT[myPlayer];delete AVT[myPlayer];
+      }
       // 4. Update user doc playerName
       await updateDoc(doc(db,"users",CU.uid),{name:newName,playerName:newName});
       if(CUD){CUD.name=newName;CUD.playerName=newName;}
@@ -518,14 +556,16 @@ document.getElementById("btnSaveProfile").onclick=async()=>{
     // Update Auth display name (no photoURL here — too long)
     if(newName!==CU.displayName) await updateProfile(CU,{displayName:newName});
 
-    // Save avatar — only in Firestore, not Auth
+    // Save avatar — compressed, only in Firestore (base64 in Auth has 1KB limit)
     const avatarKey=CUD?.playerName||newName;
-    if(f&&myPlayer){
-      const r=new FileReader();
-      const pURL=await new Promise(res=>{r.onload=e=>res(e.target.result);r.readAsDataURL(f);});
-      const ua={...AVT,[avatarKey]:pURL};
-      await setDoc(doc(db,"data","avatars"),ua);AVT=ua;
-      await updateDoc(doc(db,"users",CU.uid),{photoURL:pURL});
+    const avatarInput=document.getElementById("avatarInput");
+    const pURL=avatarInput._compressed||(f?await compressImage(f):null);
+    if(pURL&&myPlayer){
+      // Save avatar per-player (not in the monolithic avatars doc to avoid size limit)
+      await setDoc(doc(db,"avatars",avatarKey),{url:pURL});
+      AVT[avatarKey]=pURL;
+      await updateDoc(doc(db,"users",CU.uid),{hasAvatar:true});
+      avatarInput._compressed=null;
     } else if(f&&!myPlayer){
       toast("Sem jogador associado para guardar a foto.","warning");return;
     }
