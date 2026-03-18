@@ -641,7 +641,7 @@ async function loadUsers(){
   const snap=await getDocs(collection(db,"users"));
   const users=[];snap.forEach(d=>users.push({id:d.id,...d.data()}));
   const pending=users.filter(u=>u.role==="pendente");
-  const approved=users.filter(u=>u.role!=="pendente");
+  const approved=users.filter(u=>u.role!=="pendente"&&u.role!=="eliminado"&&u.role!=="rejeitado");
 
   let html="";
   if(pending.length>0){
@@ -668,25 +668,37 @@ async function loadUsers(){
         </div>`).join("")}
     </div>`;
   }
-  html+=approved.map(u=>`
-    <div class="user-row" style="flex-wrap:wrap;gap:8px">
+  // Build map of already-associated players
+  const usedPlayers=new Set(approved.filter(u=>u.playerName).map(u=>u.playerName));
+  html+=approved.map(u=>{
+    const canHavePlayer=u.role==="jogador"||u.role==="admin";
+    const playerSelector=canHavePlayer?`
+      <select id="assoc_${u.id}" style="padding:5px 8px;font-size:12px;width:auto;max-width:110px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+        <option value="">${u.playerName||"-- jogador --"}</option>
+        ${PLY.map(p=>{
+          const taken=usedPlayers.has(p)&&u.playerName!==p;
+          return`<option value="${p}" ${u.playerName===p?"selected":""} ${taken?"disabled":""} style="${taken?"color:var(--muted)":""}">
+            ${p}${taken?" (ocupado)":""}
+          </option>`;
+        }).join("")}
+      </select>
+      <button class="btn btn-ghost" style="padding:5px 8px;font-size:11px" onclick="window.__assocPlayer('${u.id}')" title="Associar jogador"><i class="fas fa-link"></i></button>`:"";
+    return`<div class="user-row" style="flex-wrap:wrap;gap:8px">
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px">${avatarHtml(u.playerName||u.name,24)}<span class="user-email">${u.name||u.email}</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">${u.email}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${u.email}${u.playerName&&canHavePlayer?` · <strong style="color:var(--gold)">${u.playerName}</strong>`:""}</div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <select id="assoc_${u.id}" style="padding:5px 8px;font-size:12px;width:auto;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-          <option value="">${u.playerName?"Jogador: "+u.playerName:"-- sem jogador --"}</option>
-          ${PLY.map(p=>`<option value="${p}" ${u.playerName===p?"selected":""}>${p}</option>`).join("")}
-        </select>
-        <button class="btn btn-ghost" style="padding:5px 8px;font-size:11px" onclick="window.__assocPlayer('${u.id}')"><i class="fas fa-link"></i></button>
+        ${playerSelector}
         <select class="user-role-select" onchange="window.__setRole('${u.id}',this.value)">
           <option value="viewer" ${u.role==="viewer"?"selected":""}>Viewer</option>
           <option value="jogador" ${u.role==="jogador"?"selected":""}>Jogador</option>
           <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
         </select>
+        <button class="btn btn-red btn-icon" style="padding:5px 8px;font-size:11px" onclick="window.__deleteUser('${u.id}','${u.email}')" title="Eliminar utilizador"><i class="fas fa-trash"></i></button>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
   el.innerHTML=html||"<p style='color:var(--muted);font-size:13px'>Nenhum utilizador.</p>";
 }
 window.__approveUser=async(uid,role)=>{
@@ -719,14 +731,41 @@ window.__rejectUser=async(uid,email)=>{
     toast("Pedido rejeitado.");loadUsers();
   });
 };
-window.__setRole=async(uid,role)=>{if(CR!=="admin")return;await updateDoc(doc(db,"users",uid),{role});toast("Acesso atualizado!");loadUsers();};
+window.__delUser=async(uid,email)=>{
+  if(CR!=="admin")return;
+  if(uid===CU.uid){toast("Nao podes eliminar a tua propria conta.","error");return;}
+  showConfirm("Eliminar Utilizador",`Eliminar a conta de "${email}" permanentemente? O acesso sera revogado.`,async()=>{
+    await updateDoc(doc(db,"users",uid),{role:"eliminado",playerName:null,deleted:true});
+    toast(`"${email}" eliminado.`);loadUsers();
+  });
+};
+window.__setRole=async(uid,role)=>{
+  if(CR!=="admin")return;
+  const update={role};
+  if(role==="viewer"){update.playerName=null;}
+  await updateDoc(doc(db,"users",uid),update);
+  toast("Acesso atualizado!");loadUsers();
+};
 window.__assocPlayer=async(uid)=>{
   if(CR!=="admin")return;
   const sel=document.getElementById("assoc_"+uid);
   const plyName=sel?sel.value:"";
   if(!plyName){toast("Seleciona um jogador.","warning");return;}
+  // Check if already taken by another user
+  const snap=await getDocs(collection(db,"users"));
+  let takenBy=null;
+  snap.forEach(d=>{if(d.id!==uid&&d.data().playerName===plyName)takenBy=d.data().name||d.data().email;});
+  if(takenBy){toast(`"${plyName}" ja esta associado a ${takenBy}.`,"error");return;}
   await updateDoc(doc(db,"users",uid),{playerName:plyName});
   toast(`Jogador "${plyName}" associado!`);loadUsers();
+};
+window.__deleteUser=async(uid,email)=>{
+  if(CR!=="admin")return;
+  if(uid===CU.uid){toast("Nao podes eliminar a tua propria conta.","error");return;}
+  showConfirm("Eliminar Utilizador",`Eliminar a conta de "${email}"? Esta acao nao pode ser desfeita.`,async()=>{
+    await updateDoc(doc(db,"users",uid),{role:"eliminado",playerName:null,deletedAt:new Date().toISOString()});
+    toast("Utilizador eliminado.");loadUsers();
+  });
 };
 
 // Player grid
