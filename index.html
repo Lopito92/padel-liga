@@ -462,14 +462,21 @@ function renderAll(){updateGameHistoryDisplay();updateRanking();updatePairsRanki
 // Avatars — each player stored in separate doc to avoid 1MB limit
 async function loadAvatars(){
   try{
-    // Load avatars for current players
     AVT={};
-    await Promise.all(PLY.map(async p=>{
-      try{const s=await getDoc(doc(db,"avatars",p));if(s.exists())AVT[p]=s.data().url;}catch(e){}
+    // Load all players + current user's player (in case playerName differs from PLY entry)
+    const keys=[...PLY];
+    if(CUD?.playerName&&!keys.includes(CUD.playerName))keys.push(CUD.playerName);
+    await Promise.all(keys.map(async p=>{
+      try{const s=await getDoc(doc(db,"avatars",p));if(s.exists()&&s.data().url)AVT[p]=s.data().url;}catch(e){}
     }));
+    // Also check user doc photoURL as fallback
+    if(CUD?.playerName&&!AVT[CUD.playerName]&&CUD?.photoURL){
+      AVT[CUD.playerName]=CUD.photoURL;
+    }
     updateHeaderAvatar();
     updatePlayersAdminList();
-  }catch(e){}
+    renderAll();
+  }catch(e){console.error("loadAvatars",e);}
 }
 function avatarHtml(name,sz=24){
   const url=AVT[name];
