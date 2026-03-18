@@ -1029,7 +1029,7 @@
       if (isNaN(s1) || isNaN(s2)) { toast(`Preenche o resultado do Set ${i+1}.`, 'error'); valid = false; return; }
       if (!isValidSetScore(s1, s2)) { toast(`Set ${i+1}: resultado inválido (${s1}-${s2}). Válidos: 6-0 a 6-4, 7-5 ou 7-6.`, 'error'); valid = false; return; }
       if (s1 > s2) t1Score++; else t2Score++;
-      setScores.push([s1, s2]);
+      setScores.push({a:s1, b:s2});
     });
     if (!valid) return;
 
@@ -1130,7 +1130,8 @@
       if (isDraw) { playerStats[pn].draws++; playerStats[pn].form.push('D'); playerStats[pn].pote += poteDraw; }
       else if (won) { playerStats[pn].wins++; playerStats[pn].form.push('W'); }
       else { playerStats[pn].losses++; playerStats[pn].form.push('L'); playerStats[pn].pote += pote; }
-      setScores.forEach(([a,b]) => {
+      setScores.forEach((set) => {
+        const a = set.a ?? set[0]; const b = set.b ?? set[1];
         const [myS, oppS] = isT1 ? [a,b] : [b,a];
         playerStats[pn].setsWon += myS > oppS ? 1 : 0;
         playerStats[pn].setsLost += myS < oppS ? 1 : 0;
@@ -1149,7 +1150,8 @@
       if (isDraw) { pairsStats[key].draws++; pairsStats[key].form.push('D'); }
       else if (isWinner) { pairsStats[key].wins++; pairsStats[key].form.push('W'); }
       else { pairsStats[key].losses++; pairsStats[key].form.push('L'); }
-      setScores.forEach(([a,b]) => {
+      setScores.forEach((set) => {
+        const a = set.a ?? set[0]; const b = set.b ?? set[1];
         const [myS, oppS] = isT1 ? [a,b] : [b,a];
         pairsStats[key].setsWon += myS > oppS ? 1 : 0; pairsStats[key].setsLost += myS < oppS ? 1 : 0;
         pairsStats[key].gamesWon += myS; pairsStats[key].gamesLost += oppS;
@@ -1286,9 +1288,7 @@
     gameHistory.forEach(game => {
       const [s1, s2] = game.result.split('-').map(Number);
       const isDraw = s1 === s2;
-      const sets = (game.setScores||[]).map(([a,b]) =>
-        `<span style="${a>b?'font-weight:700':'color:var(--muted)'}">${a}</span>–<span style="${b>a?'font-weight:700':'color:var(--muted)'}">${b}</span>`
-      ).join(' ');
+      const sets = (game.setScores||[]).map((set) => { const a=set.a??set[0]; const b=set.b??set[1]; return `<span style="${a>b?'font-weight:700':'color:var(--muted)'}">${a}</span>–<span style="${b>a?'font-weight:700':'color:var(--muted)'}">${b}</span>`; }).join(' ');
       const row = document.createElement('tr');
       row.dataset.gameId = game.id;
       row.innerHTML = `
