@@ -924,17 +924,38 @@ function openNewGame(){
 function openEditGame(id){
   if(CR!=="admin")return;
   const g=GH.find(x=>x.id===id);if(!g)return;
-  editId=id;document.getElementById("gameModalTitle").textContent="Editar Jogo";
-  document.getElementById("playerSelectionSection").style.display="none";
+  editId=id;
+  document.getElementById("gameModalTitle").textContent="Editar Jogo";
+  document.getElementById("btnSubmitGame").textContent="Guardar Alteracoes";
+
+  // Show player selection so teams can be changed
+  document.getElementById("playerSelectionSection").style.display="block";
+
+  // Pre-select the players from the existing game
+  selP=[];
+  [...g.team1,...g.team2].forEach(p=>{
+    if(!p.startsWith("convidado"))selP.push(p);
+    else selP.push("convidado");
+  });
+  updatePlayerGrid();
+
+  // Pre-fill convidado name if any
+  const est=[...g.team1,...g.team2].find(p=>p.startsWith("convidado ("));
+  if(est){
+    document.getElementById("estrangeiroWrap").style.display="block";
+    document.getElementById("estrangeiroName").value=est.replace("convidado (","").replace(")","");
+  }
+
+  // Show current teams
   cT1=[...g.team1];cT2=[...g.team2];tDrawn=true;
   document.getElementById("team1Players").innerHTML=g.team1.join("<br>");
   document.getElementById("team2Players").innerHTML=g.team2.join("<br>");
   document.getElementById("teamsDisplay").style.display="grid";
   document.getElementById("manualTeams").style.display="none";
+
   document.getElementById("gameDate").value=g.date;
   setCount=0;document.getElementById("setsContainer").innerHTML="";
-  g.setScores.forEach(s=>{const a=s.a??s[0],b=s.b??s[1];addSet();const c=document.querySelectorAll(".set-container");const l=c[c.length-1];l.querySelectorAll("select")[0].value=a;l.querySelectorAll("select")[1].value=b;});
-  document.getElementById("btnSubmitGame").textContent="Guardar Alteracoes";
+  g.setScores.forEach(s=>{const a=s.a??s[0],b=s.b??s[1];addSet();const cs=document.querySelectorAll(".set-container");const l=cs[cs.length-1];l.querySelectorAll("select")[0].value=a;l.querySelectorAll("select")[1].value=b;});
   openModal("newGameModal");
 }
 
@@ -1018,7 +1039,7 @@ window.__playerStats=n=>openPlayerStats(n);
 
 // Stats calc
 function validSet(a,b){const h=Math.max(a,b),l=Math.min(a,b);if(h===l)return false;if(h===6)return l<=4;if(h===7)return l===5||l===6;return false;}
-function vRate(s){const t=s.wins+s.losses+s.draws;return t?((s.wins+.5*s.draws)/t*100).toFixed(1):"0.0";}
+function vRate(s){const decisive=s.wins+s.losses;return decisive?(s.wins/decisive*100).toFixed(1):"0.0";}
 function rSort(a,b){const v=parseFloat(vRate(b[1]))-parseFloat(vRate(a[1]));if(v!==0)return v;const sd=(b[1].setsWon-b[1].setsLost)-(a[1].setsWon-a[1].setsLost);if(sd!==0)return sd;return(b[1].gamesWon-b[1].gamesLost)-(a[1].gamesWon-a[1].gamesLost);}
 function calcPS(t1,t2,s1,s2,sc){
   const pd=CFG.poteDerrota??5,pe=CFG.poteEmpate??2.5;
