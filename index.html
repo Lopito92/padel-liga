@@ -472,9 +472,9 @@ function openProfileModal(){
   document.getElementById("avatarPreviewWrap").innerHTML=url?`<img src="${url}" class="avatar-preview">`:`<div style="width:90px;height:90px;border-radius:50%;background:var(--surface3);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted)">${(nm||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</div>`;
   // Show/hide avatar upload based on whether user has a player
   document.querySelector(".avatar-upload label").style.display=myPlayer?"":"none";
-  document.querySelector(".avatar-upload label + *") // nothing
-  if(!myPlayer){document.getElementById("avatarPreviewWrap").insertAdjacentHTML("afterend","<p id='noPlayerMsg' style='font-size:12px;color:var(--muted);text-align:center;margin-top:8px'>Sem jogador associado. Pede ao admin para te aprovar.</p>");}
-  else{const m=document.getElementById("noPlayerMsg");if(m)m.remove();}
+  // Remove old message first to avoid duplicates
+  const oldMsg=document.getElementById("noPlayerMsg");if(oldMsg)oldMsg.remove();
+  if(!myPlayer){document.getElementById("avatarPreviewWrap").insertAdjacentHTML("afterend","<p id='noPlayerMsg' style='font-size:12px;color:var(--muted);text-align:center;margin-top:8px'>Sem jogador associado. Pede ao admin para te associar.</p>");}
   openModal("profileModal");
 }
 document.getElementById("avatarInput").addEventListener("change",function(){
@@ -669,16 +669,23 @@ async function loadUsers(){
     </div>`;
   }
   html+=approved.map(u=>`
-    <div class="user-row">
+    <div class="user-row" style="flex-wrap:wrap;gap:8px">
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px">${avatarHtml(u.playerName||u.name,24)}<span class="user-email">${u.name||u.email}</span></div>
-        <div style="font-size:11px;color:var(--muted)">${u.email}${u.playerName?` &middot; Jogador: <strong>${u.playerName}</strong>`:""}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${u.email}</div>
       </div>
-      <select class="user-role-select" onchange="window.__setRole('${u.id}',this.value)">
-        <option value="viewer" ${u.role==="viewer"?"selected":""}>Viewer</option>
-        <option value="jogador" ${u.role==="jogador"?"selected":""}>Jogador</option>
-        <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
-      </select>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <select id="assoc_${u.id}" style="padding:5px 8px;font-size:12px;width:auto;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+          <option value="">${u.playerName?"Jogador: "+u.playerName:"-- sem jogador --"}</option>
+          ${PLY.map(p=>`<option value="${p}" ${u.playerName===p?"selected":""}>${p}</option>`).join("")}
+        </select>
+        <button class="btn btn-ghost" style="padding:5px 8px;font-size:11px" onclick="window.__assocPlayer('${u.id}')"><i class="fas fa-link"></i></button>
+        <select class="user-role-select" onchange="window.__setRole('${u.id}',this.value)">
+          <option value="viewer" ${u.role==="viewer"?"selected":""}>Viewer</option>
+          <option value="jogador" ${u.role==="jogador"?"selected":""}>Jogador</option>
+          <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
+        </select>
+      </div>
     </div>`).join("");
   el.innerHTML=html||"<p style='color:var(--muted);font-size:13px'>Nenhum utilizador.</p>";
 }
@@ -712,7 +719,15 @@ window.__rejectUser=async(uid,email)=>{
     toast("Pedido rejeitado.");loadUsers();
   });
 };
-window.__setRole=async(uid,role)=>{if(CR!=="admin")return;await updateDoc(doc(db,"users",uid),{role});toast("Acesso atualizado!");};
+window.__setRole=async(uid,role)=>{if(CR!=="admin")return;await updateDoc(doc(db,"users",uid),{role});toast("Acesso atualizado!");loadUsers();};
+window.__assocPlayer=async(uid)=>{
+  if(CR!=="admin")return;
+  const sel=document.getElementById("assoc_"+uid);
+  const plyName=sel?sel.value:"";
+  if(!plyName){toast("Seleciona um jogador.","warning");return;}
+  await updateDoc(doc(db,"users",uid),{playerName:plyName});
+  toast(`Jogador "${plyName}" associado!`);loadUsers();
+};
 
 // Player grid
 function updatePlayerGrid(){
