@@ -454,23 +454,32 @@ function avatarHtml(name,sz=24){
 }
 function updateHeaderAvatar(){
   const el=document.getElementById("headerAvatar");if(!CU){el.innerHTML="";return;}
-  const nm=CU.displayName||CU.email,url=CU.photoURL||AVT[nm];
-  el.innerHTML=url?`<img src="${url}" class="header-avatar" id="hAv">`:`<span id="hAv" style="width:32px;height:32px;border-radius:50%;background:var(--surface3);border:2px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer">${(nm||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</span>`;
+  const nm=CU.displayName||CUD?.name||CU.email;
+  const myPlayer=CUD?CUD.playerName:null;
+  const avatarKey=myPlayer||nm;
+  // Prefer Firestore avatar (AVT) over Auth photoURL to avoid stale base64 in Auth
+  const url=AVT[avatarKey]||CUD?.photoURL;
+  el.innerHTML=url?`<img src="${url}" class="header-avatar" id="hAv" onerror="this.style.display='none'">`:`<span id="hAv" style="width:32px;height:32px;border-radius:50%;background:var(--surface3);border:2px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer">${(nm||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</span>`;
   document.getElementById("hAv").onclick=openProfileModal;
 }
 
 // Profile
 function openProfileModal(){
   const myPlayer=CUD?CUD.playerName:null;
-  const nm=myPlayer||CU.displayName||"";
-  const url=CU.photoURL||AVT[nm];
-  // Show player name (read-only for non-admins)
+  const displayName=CU.displayName||CUD?.name||"";
+  // Avatar: use player avatar if has player, else photoURL
+  const avatarKey=myPlayer||displayName;
+  const url=AVT[avatarKey]||CUD?.photoURL;
+  // Name field — editable by everyone (display name, not player name)
   const pnEl=document.getElementById("profileName");
-  pnEl.value=nm;pnEl.readOnly=CR!=="admin";
-  pnEl.style.opacity=CR!=="admin"?"0.6":"1";
-  document.getElementById("profileName").previousElementSibling.textContent=myPlayer?"O teu jogador":"Nome";
-  document.getElementById("avatarPreviewWrap").innerHTML=url?`<img src="${url}" class="avatar-preview">`:`<div style="width:90px;height:90px;border-radius:50%;background:var(--surface3);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted)">${(nm||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</div>`;
-  // Show/hide avatar upload based on whether user has a player
+  pnEl.value=displayName;pnEl.readOnly=false;pnEl.style.opacity="1";
+  // Label shows player name as info (read-only display)
+  const lbl=document.getElementById("profileName").previousElementSibling;
+  lbl.innerHTML=myPlayer?`Nome de exibicao <span style="color:var(--gold);font-size:10px">(jogador: ${myPlayer})</span>`:"Nome de exibicao";
+  document.getElementById("avatarPreviewWrap").innerHTML=url
+    ?`<img src="${url}" class="avatar-preview">`
+    :`<div style="width:90px;height:90px;border-radius:50%;background:var(--surface3);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted)">${(displayName||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</div>`;
+  // Show avatar upload only if has player
   document.querySelector(".avatar-upload label").style.display=myPlayer?"":"none";
   // Remove old message first to avoid duplicates
   const oldMsg=document.getElementById("noPlayerMsg");if(oldMsg)oldMsg.remove();
@@ -483,22 +492,31 @@ document.getElementById("avatarInput").addEventListener("change",function(){
 });
 document.getElementById("btnSaveProfile").onclick=async()=>{
   const f=document.getElementById("avatarInput").files[0];
+  const newName=document.getElementById("profileName").value.trim();
   const myPlayer=CUD?CUD.playerName:null;
   try{
+    // Save display name
+    if(newName&&newName!==CU.displayName){
+      await updateProfile(CU,{displayName:newName});
+      await updateDoc(doc(db,"users",CU.uid),{name:newName});
+      if(CUD)CUD.name=newName;
+    }
+    // Save avatar — only in Firestore avatars map, NOT in Firebase Auth (base64 too long)
     if(f&&myPlayer){
-      // Only save avatar for own player
       const r=new FileReader();
       const pURL=await new Promise(res=>{r.onload=e=>res(e.target.result);r.readAsDataURL(f);});
       const ua={...AVT,[myPlayer]:pURL};
-      await setDoc(doc(db,"data","avatars"),ua);AVT=ua;
-      await updateProfile(CU,{photoURL:pURL});
+      await setDoc(doc(db,"data","avatars"),ua);
+      AVT=ua;
+      // Store in user doc too (but NOT in Auth profile to avoid "too long" error)
       await updateDoc(doc(db,"users",CU.uid),{photoURL:pURL});
     } else if(f&&!myPlayer){
-      toast("Nao tens jogador associado. Pede ao admin para te aprovar.","warning");return;
+      toast("Nao tens jogador associado para guardar a foto.","warning");return;
     }
     updateHeaderAvatar();
-    if(CR==="admin"){updatePlayersAdminList();}
-    closeModal("profileModal");toast("Foto atualizada!");
+    updatePlayersAdminList();
+    closeModal("profileModal");
+    toast(f?"Foto atualizada!":"Nome atualizado!");
   }catch(e){toast("Erro: "+e.message,"error");}
 };
 
