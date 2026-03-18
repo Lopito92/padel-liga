@@ -261,6 +261,23 @@
         <div id="usersAdminList"><p style="color:var(--muted);font-size:13px">A carregar...</p></div>
       </div>
       <div class="admin-section">
+        <h3>Importar Jogos</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Importa jogos a partir do ficheiro JSON gerado. Os jogos existentes serao substituidos.</p>
+        <label class="btn btn-ghost" style="cursor:pointer;width:100%;justify-content:center">
+          <i class="fas fa-upload"></i> Selecionar ficheiro JSON
+          <input type="file" id="importGamesInput" accept=".json" style="display:none">
+        </label>
+        <div id="importPreview" style="display:none;margin-top:12px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">PRE-VISUALIZACAO</div>
+            <div id="importPreviewText" style="font-size:13px"></div>
+          </div>
+          <button class="btn btn-green" id="btnConfirmImport" style="width:100%;justify-content:center">
+            <i class="fas fa-check"></i> Confirmar Importacao
+          </button>
+        </div>
+      </div>
+      <div class="admin-section">
         <h3>Nova Temporada</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Arquiva os dados e reinicia. Os jogadores sao mantidos.</p>
         <button class="btn btn-red" id="btnNewSeason"><i class="fas fa-redo"></i> Iniciar Nova Temporada</button>
@@ -1125,6 +1142,53 @@ window.__delSeason=async(idx)=>{
     toast("Temporada eliminada.");
   });
 };
+
+// ── IMPORT GAMES ──
+let importedGames=null;
+document.getElementById("importGamesInput").addEventListener("change",function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const list=data.list||data;
+      if(!Array.isArray(list)||!list[0]?.team1){
+        toast("Ficheiro invalido. Deve ter formato {list:[...jogos]}","error");
+        return;
+      }
+      importedGames=list;
+      // Show preview
+      const prev=document.getElementById("importPreview");
+      const txt=document.getElementById("importPreviewText");
+      prev.style.display="block";
+      txt.innerHTML=`<strong>${list.length} jogos</strong> encontrados<br>
+        <span style="color:var(--muted);font-size:12px">
+          De ${list[list.length-1]?.date||"?"} ate ${list[0]?.date||"?"}<br>
+          Jogadores: ${[...new Set(list.flatMap(g=>[...g.team1,...g.team2]).filter(p=>!p.startsWith("convidado")))].join(", ")}
+        </span>`;
+      toast("Ficheiro carregado! Verifica e confirma.");
+    }catch(err){toast("Erro ao ler ficheiro: "+err.message,"error");}
+  };
+  r.readAsText(f);
+});
+
+document.getElementById("btnConfirmImport").addEventListener("click",async()=>{
+  if(!importedGames){toast("Sem jogos para importar.","warning");return;}
+  if(CR!=="admin"){toast("Sem permissao.","error");return;}
+  showConfirm(
+    "Confirmar Importacao",
+    `Isto vai substituir todos os jogos actuais pelos ${importedGames.length} jogos do ficheiro. Continuar?`,
+    async()=>{
+      // Sort by date descending (newest first)
+      const sorted=[...importedGames].sort((a,b)=>new Date(b.date)-new Date(a.date));
+      await setDoc(doc(db,"data","games"),{list:sorted});
+      document.getElementById("importPreview").style.display="none";
+      document.getElementById("importGamesInput").value="";
+      importedGames=null;
+      toast(`${sorted.length} jogos importados com sucesso!`);
+    }
+  );
+});
 </script>
 </body>
 </html>
