@@ -1061,8 +1061,30 @@ function updateDashboard(){
 function updateSeasonHistory(){
   const el=document.getElementById("seasonsContainer");
   if(!SH.length){el.innerHTML='<p style="color:var(--muted);font-size:14px">Nenhuma temporada guardada.</p>';return;}
-  el.innerHTML=SH.map(s=>`<div class="season-card"><h4>${s.name}</h4><div class="season-meta"><span>${s.date}</span><span>${s.games?.length||0} jogos</span><span>${s.champion}</span></div></div>`).join("");
+  el.innerHTML=SH.map((s,i)=>`
+    <div class="season-card" style="position:relative">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div>
+          <h4>${s.name}</h4>
+          <div class="season-meta">
+            <span><i class="fas fa-calendar"></i> ${s.date}</span>
+            <span><i class="fas fa-gamepad"></i> ${s.games?.length||0} jogos</span>
+            <span><i class="fas fa-trophy"></i> ${s.champion}</span>
+          </div>
+        </div>
+        ${CR==="admin"?`<button class="btn btn-red" style="padding:6px 10px;font-size:12px;flex-shrink:0" onclick="window.__delSeason(${i})" title="Eliminar temporada"><i class="fas fa-trash"></i></button>`:""}
+      </div>
+    </div>`).join("");
 }
+window.__delSeason=async(idx)=>{
+  if(CR!=="admin")return;
+  const s=SH[idx];if(!s)return;
+  showConfirm("Eliminar Temporada",`Eliminar "${s.name}" do arquivo? Os dados desta temporada serao perdidos permanentemente.`,async()=>{
+    const newSH=SH.filter((_,i)=>i!==idx);
+    await setDoc(doc(db,"data","seasons"),{list:newSH});
+    toast("Temporada eliminada.");
+  });
+};
 </script>
 </body>
 </html>
