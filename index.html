@@ -475,7 +475,7 @@ function openProfileModal(){
   pnEl.value=displayName;pnEl.readOnly=false;pnEl.style.opacity="1";
   // Label shows player name as info (read-only display)
   const lbl=document.getElementById("profileName").previousElementSibling;
-  lbl.innerHTML=myPlayer?`Nome de exibicao <span style="color:var(--gold);font-size:10px">(jogador: ${myPlayer})</span>`:"Nome de exibicao";
+  lbl.innerHTML=myPlayer?`Nome / Jogador <span style="font-size:10px;color:var(--muted)">(alterar aqui muda o nome na liga)</span>`:"Nome de exibicao";
   document.getElementById("avatarPreviewWrap").innerHTML=url
     ?`<img src="${url}" class="avatar-preview">`
     :`<div style="width:90px;height:90px;border-radius:50%;background:var(--surface3);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted)">${(displayName||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</div>`;
@@ -494,29 +494,45 @@ document.getElementById("btnSaveProfile").onclick=async()=>{
   const f=document.getElementById("avatarInput").files[0];
   const newName=document.getElementById("profileName").value.trim();
   const myPlayer=CUD?CUD.playerName:null;
+  if(!newName){toast("O nome nao pode estar vazio.","warning");return;}
   try{
-    // Save display name
-    if(newName&&newName!==CU.displayName){
-      await updateProfile(CU,{displayName:newName});
+    // If name changed and user has a player — rename the player everywhere
+    if(myPlayer && newName !== myPlayer){
+      // 1. Rename in players list
+      const newPLY=PLY.map(p=>p===myPlayer?newName:p);
+      await setDoc(doc(db,"data","players"),{list:newPLY});
+      // 2. Rename in all games
+      const renameInTeam=arr=>arr.map(p=>p===myPlayer?newName:p);
+      const newGames=GH.map(g=>({...g,team1:renameInTeam(g.team1),team2:renameInTeam(g.team2)}));
+      await setDoc(doc(db,"data","games"),{list:newGames});
+      // 3. Rename in avatars
+      if(AVT[myPlayer]){const ua={...AVT,[newName]:AVT[myPlayer]};delete ua[myPlayer];await setDoc(doc(db,"data","avatars"),ua);AVT=ua;}
+      // 4. Update user doc playerName
+      await updateDoc(doc(db,"users",CU.uid),{name:newName,playerName:newName});
+      if(CUD){CUD.name=newName;CUD.playerName=newName;}
+    } else if(newName!==CU.displayName){
+      // No player or name unchanged — just update display name
       await updateDoc(doc(db,"users",CU.uid),{name:newName});
       if(CUD)CUD.name=newName;
     }
-    // Save avatar — only in Firestore avatars map, NOT in Firebase Auth (base64 too long)
+    // Update Auth display name (no photoURL here — too long)
+    if(newName!==CU.displayName) await updateProfile(CU,{displayName:newName});
+
+    // Save avatar — only in Firestore, not Auth
+    const avatarKey=CUD?.playerName||newName;
     if(f&&myPlayer){
       const r=new FileReader();
       const pURL=await new Promise(res=>{r.onload=e=>res(e.target.result);r.readAsDataURL(f);});
-      const ua={...AVT,[myPlayer]:pURL};
-      await setDoc(doc(db,"data","avatars"),ua);
-      AVT=ua;
-      // Store in user doc too (but NOT in Auth profile to avoid "too long" error)
+      const ua={...AVT,[avatarKey]:pURL};
+      await setDoc(doc(db,"data","avatars"),ua);AVT=ua;
       await updateDoc(doc(db,"users",CU.uid),{photoURL:pURL});
     } else if(f&&!myPlayer){
-      toast("Nao tens jogador associado para guardar a foto.","warning");return;
+      toast("Sem jogador associado para guardar a foto.","warning");return;
     }
     updateHeaderAvatar();
     updatePlayersAdminList();
     closeModal("profileModal");
-    toast(f?"Foto atualizada!":"Nome atualizado!");
+    toast("Perfil atualizado!");
   }catch(e){toast("Erro: "+e.message,"error");}
 };
 
