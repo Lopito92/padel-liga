@@ -731,9 +731,52 @@ document.getElementById("btnSaveConfig").onclick=async()=>{
 function updatePlayersAdminList(){
   if(CR!=="admin")return;
   const el=document.getElementById("playersAdminList");if(!el)return;
-  el.innerHTML=PLY.map(p=>`<div class="user-row">${avatarHtml(p,32)}<span class="user-email" style="margin-left:8px">${p}</span><button class="btn btn-red btn-icon" style="padding:6px 10px;font-size:12px" onclick="window.__rmPly('${p}')"><i class="fas fa-trash"></i></button></div>`).join("")||"<p style='color:var(--muted);font-size:13px'>Sem jogadores.</p>";
+  el.innerHTML=PLY.map(p=>`
+    <div class="user-row" style="flex-wrap:wrap;gap:8px">
+      <div id="plyDisplay_${p}" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+        ${avatarHtml(p,32)}
+        <span style="font-weight:600">${p}</span>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="window.__editPlyName('${p}')" title="Editar nome"><i class="fas fa-pen"></i></button>
+      </div>
+      <div id="plyEdit_${p}" style="display:none;flex:1;min-width:200px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="text" id="plyField_${p}" value="${p}" style="flex:1;padding:6px 10px;font-size:13px">
+          <button class="btn btn-primary" style="padding:6px 10px;font-size:12px" onclick="window.__savePlyName('${p}')"><i class="fas fa-check"></i></button>
+          <button class="btn btn-ghost" style="padding:6px 8px;font-size:12px" onclick="window.__cancelPlyEdit('${p}')"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+      <button class="btn btn-red btn-icon" style="padding:6px 10px;font-size:12px" onclick="window.__rmPly('${p}')" title="Remover"><i class="fas fa-trash"></i></button>
+    </div>`).join("")||"<p style='color:var(--muted);font-size:13px'>Sem jogadores.</p>";
 }
 window.__rmPly=name=>{if(CR!=="admin")return;showConfirm("Remover Jogador",`Remover "${name}"?`,async()=>{await setDoc(doc(db,"data","players"),{list:PLY.filter(p=>p!==name)});await setDoc(doc(db,"data","games"),{list:GH.filter(g=>!g.team1.includes(name)&&!g.team2.includes(name))});toast(`"${name}" removido.`);});};
+
+window.__editPlyName=name=>{
+  document.getElementById(`plyDisplay_${name}`)?.style && (document.getElementById(`plyDisplay_${name}`).style.display="none");
+  document.getElementById(`plyEdit_${name}`)?.style && (document.getElementById(`plyEdit_${name}`).style.display="flex");
+  document.getElementById(`plyField_${name}`)?.focus();
+};
+window.__cancelPlyEdit=name=>{
+  document.getElementById(`plyDisplay_${name}`)?.style && (document.getElementById(`plyDisplay_${name}`).style.display="flex");
+  document.getElementById(`plyEdit_${name}`)?.style && (document.getElementById(`plyEdit_${name}`).style.display="none");
+};
+window.__savePlyName=async(oldName)=>{
+  if(CR!=="admin")return;
+  const newName=document.getElementById(`plyField_${oldName}`)?.value.trim();
+  if(!newName||newName===oldName){window.__cancelPlyEdit(oldName);return;}
+  if(PLY.includes(newName)){toast(`"${newName}" já existe.`,"error");return;}
+  // Rename everywhere
+  const newPLY=PLY.map(p=>p===oldName?newName:p);
+  const renameTeam=arr=>arr.map(p=>p===oldName?newName:p);
+  const newGames=GH.map(g=>({...g,team1:renameTeam(g.team1),team2:renameTeam(g.team2)}));
+  // Rename in avatars
+  if(AVT[oldName]){const ua={...AVT,[newName]:AVT[oldName]};delete ua[oldName];await setDoc(doc(db,"avatars",newName),{url:AVT[oldName]});AVT=ua;}
+  // Rename in users
+  const usersSnap=await getDocs(collection(db,"users"));
+  for(const ud of usersSnap.docs){if(ud.data().playerName===oldName)await updateDoc(doc(db,"users",ud.id),{playerName:newName});}
+  await setDoc(doc(db,"data","players"),{list:newPLY});
+  await setDoc(doc(db,"data","games"),{list:newGames});
+  toast(`"${oldName}" renomeado para "${newName}"!`);
+};
 document.getElementById("btnAddPlayer").onclick=async()=>{
   if(CR!=="admin")return;const n=document.getElementById("newPlayerName").value.trim();
   if(!n){toast("Nome invalido.","error");return;}if(PLY.includes(n)){toast("Jogador ja existe.","error");return;}
