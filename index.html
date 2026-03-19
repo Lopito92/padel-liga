@@ -249,6 +249,7 @@
     <div class="tab-content" id="tab-admin">
       <div class="admin-section">
         <h3>Configuracoes</h3>
+        <div class="form-group"><label>Nome da Temporada Atual</label><input type="text" id="cfgSeasonName" placeholder="Ex: 2024/2025"></div>
         <div class="form-group"><label>Nome da Liga</label><input type="text" id="cfgLeagueName" placeholder="Liga BDNC"></div>
         <div class="form-group"><label>Pote por Derrota (euros)</label><input type="number" id="cfgPoteValue" placeholder="5" min="0" step="0.5"></div>
         <div class="form-group"><label>Pote por Empate (euros)</label><input type="number" id="cfgPoteDraw" placeholder="2.5" min="0" step="0.5"></div>
@@ -431,7 +432,9 @@ function subscribeData(){
   unsubs.forEach(u=>u());unsubs=[];
   unsubs.push(onSnapshot(doc(db,"data","config"),s=>{
     if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").textContent=(CFG.emoji||""+" ")+CFG.name;document.title=CFG.name;
-    if(CR==="admin"){document.getElementById("cfgLeagueName").value=CFG.name||"";document.getElementById("cfgSeasonName").value=CFG.seasonName||"";document.getElementById("cfgPoteValue").value=CFG.poteDerrota??5;document.getElementById("cfgPoteDraw").value=CFG.poteEmpate??2.5;}}
+    if(CR==="admin"){
+      const el1=document.getElementById("cfgLeagueName"),el2=document.getElementById("cfgSeasonName"),el3=document.getElementById("cfgPoteValue"),el4=document.getElementById("cfgPoteDraw");
+      if(el1)el1.value=CFG.name||"";if(el2)el2.value=CFG.seasonName||"";if(el3)el3.value=CFG.poteDerrota??5;if(el4)el4.value=CFG.poteEmpate??2.5;}}
   }));
   unsubs.push(onSnapshot(doc(db,"data","players"),s=>{PLY=s.exists()?(s.data().list||[]):[];updatePlayerGrid();updatePlayersAdminList();updateDashboard();loadAvatars();}));
   unsubs.push(onSnapshot(doc(db,"data","games"),s=>{GH=s.exists()?(s.data().list||[]):[];GH.sort((a,b)=>new Date(b.date)-new Date(a.date));applySeasonFilter();}));
