@@ -7,6 +7,9 @@
   <meta name="theme-color" content="#C9A84C" id="themeColorMeta">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Liga BDNC">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Liga BDNC">
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="apple-touch-icon" href="logo.png">
@@ -147,6 +150,17 @@
     .hide-mobile{display:none}
     @media(min-width:700px){.hide-mobile{display:table-cell}}
   </style>
+
+
+  <script>
+    if('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', {scope: './'})
+          .then(r => console.log('SW ok', r.scope))
+          .catch(e => console.log('SW fail', e));
+      });
+    }
+  </script>
 </head>
 <body>
 <div id="loadingScreen"><div class="logo"><img src="logo.png" style="height:60px;width:auto;margin-bottom:8px"><br>LIGA BDNC</div><div class="spinner"></div></div>
@@ -362,7 +376,7 @@ const ADMIN_EMAIL="mflopo92@gmail.com";
 const app=initializeApp(FC),auth=getAuth(app),db=getFirestore(app);
 
 // PWA manifest
-const mf={name:"Liga BDNC",short_name:"BDNC",start_url:location.pathname,display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"logo.png",sizes:"512x512",type:"image/png"},{src:"logo.png",sizes:"192x192",type:"image/png"}]};
+const mf={name:"Liga BDNC",short_name:"BDNC",start_url:"./",scope:"./",display:"standalone",orientation:"portrait",background_color:"#0E0E0E",theme_color:"#C9A84C",description:"Liga de Padel BDNC",icons:[{src:"logo.png",sizes:"512x512",type:"image/png",purpose:"any maskable"},{src:"logo.png",sizes:"192x192",type:"image/png",purpose:"any maskable"}]};
 document.getElementById("pwaManifest").href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:"application/json"}));
 
 // Theme
