@@ -189,7 +189,7 @@
 <div id="appScreen">
   <div class="header">
     <div class="header-inner">
-      <div class="league-title" id="leagueTitle" style="display:flex;align-items:center;gap:8px"><img src="logo.png" id="headerLogo" style="height:36px;width:auto;object-fit:contain" onerror="this.style.display='none'">LIGA BDNC</div>
+      <div class="league-title" id="leagueTitle">LIGA BDNC</div>
       <div class="header-actions">
         <button class="btn btn-green" id="headerNewGameBtn" style="display:none"><i class="fas fa-plus-circle"></i> Novo Jogo</button>
         <button class="btn btn-ghost btn-icon" id="btnThemeToggle" title="Modo claro/escuro"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -432,7 +432,7 @@ function applyRole(){
 function subscribeData(){
   unsubs.forEach(u=>u());unsubs=[];
   unsubs.push(onSnapshot(doc(db,"data","config"),s=>{
-    if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").childNodes[document.getElementById("leagueTitle").childNodes.length-1].textContent=" "+(CFG.name||"Liga BDNC");document.title=CFG.name||"Liga BDNC";
+    if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").textContent=CFG.name||"Liga BDNC";document.title=CFG.name||"Liga BDNC";
     if(CR==="admin"){
       const el1=document.getElementById("cfgLeagueName"),el2=document.getElementById("cfgSeasonName"),el3=document.getElementById("cfgPoteValue"),el4=document.getElementById("cfgPoteDraw");
       if(el1)el1.value=CFG.name||"";if(el2)el2.value=CFG.seasonName||"";if(el3)el3.value=CFG.poteDerrota??5;if(el4)el4.value=CFG.poteEmpate??2.5;}}
