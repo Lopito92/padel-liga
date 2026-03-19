@@ -4,12 +4,12 @@
   <title>Liga BDNC</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <meta name="theme-color" content="#0E0E0E" id="themeColorMeta">
+  <meta name="theme-color" content="#C9A84C" id="themeColorMeta">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Liga BDNC">
   <link rel="icon" href="logo.png" type="image/png">
-  <link rel="apple-touch-icon" href="logo.png"><text y='.9em' font-size='90'>🎾</text></svg>">
+  <link rel="apple-touch-icon" href="logo.png">
   <link rel="manifest" id="pwaManifest">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
@@ -149,7 +149,7 @@
   </style>
 </head>
 <body>
-<div id="loadingScreen"><div class="logo">LIGA BDNC</div><div class="spinner"></div></div>
+<div id="loadingScreen"><div class="logo"><img src="logo.png" style="height:60px;width:auto;margin-bottom:8px"><br>LIGA BDNC</div><div class="spinner"></div></div>
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-title">BDNC</div>
@@ -189,7 +189,7 @@
 <div id="appScreen">
   <div class="header">
     <div class="header-inner">
-      <div class="league-title" id="leagueTitle">LIGA BDNC</div>
+      <div class="league-title" id="leagueTitle" style="display:flex;align-items:center;gap:10px"><img src="logo.png" style="height:40px;width:auto;flex-shrink:0"><span id="leagueTitleSpan">LIGA BDNC</span></div>
       <div class="header-actions">
         <button class="btn btn-green" id="headerNewGameBtn" style="display:none"><i class="fas fa-plus-circle"></i> Novo Jogo</button>
         <button class="btn btn-ghost btn-icon" id="btnThemeToggle" title="Modo claro/escuro"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -432,7 +432,8 @@ function applyRole(){
 function subscribeData(){
   unsubs.forEach(u=>u());unsubs=[];
   unsubs.push(onSnapshot(doc(db,"data","config"),s=>{
-    if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").textContent=CFG.name||"Liga BDNC";document.title=CFG.name||"Liga BDNC";
+    if(s.exists()){CFG={...CFG,...s.data()};const _ls=document.getElementById("leagueTitleSpan");if(_ls)_ls.textContent=CFG.name||"Liga BDNC";
+      document.title=CFG.name||"Liga BDNC";
     if(CR==="admin"){
       const el1=document.getElementById("cfgLeagueName"),el2=document.getElementById("cfgSeasonName"),el3=document.getElementById("cfgPoteValue"),el4=document.getElementById("cfgPoteDraw");
       if(el1)el1.value=CFG.name||"";if(el2)el2.value=CFG.seasonName||"";if(el3)el3.value=CFG.poteDerrota??5;if(el4)el4.value=CFG.poteEmpate??2.5;}}
