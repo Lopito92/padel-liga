@@ -156,11 +156,11 @@
     <div class="login-error" id="loginError"></div>
     <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="email@exemplo.com" autocomplete="email"></div>
     <div class="form-group"><label>Palavra-passe</label><input type="password" id="loginPassword" placeholder="..." autocomplete="current-password"></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px" id="btnLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px" id="btnLogin"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"/></svg></span> Entrar</button>
     <div style="text-align:center;margin-top:16px"><span style="color:var(--muted);font-size:13px">Sem conta? </span><span style="color:var(--gold);font-size:13px;cursor:pointer;font-weight:600" id="btnToggleRegister">Registar</span></div>
     <div id="registerSection" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
       <div class="form-group"><label>Nome</label><input type="text" id="registerName" placeholder="O teu nome"></div>
-      <button class="btn btn-ghost" style="width:100%;justify-content:center" id="btnRegister"><i class="fas fa-user-plus"></i> Criar conta</button>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center" id="btnRegister"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 640 512" fill="currentColor"><path d="M624 208h-64v-64c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v64h-64c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h64v64c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-64h64c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm-400 48c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/></svg></span> Criar conta</button>
       <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px">Apos o registo o admin atribui acesso.</p>
     </div>
   </div>
@@ -171,7 +171,7 @@
     <div style="font-size:48px;margin-bottom:12px">⏳</div>
     <div class="login-title" style="font-size:28px">Pedido Enviado</div>
     <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px">A tua conta foi criada com sucesso.<br>Aguarda que o admin aprove o teu acesso e te associe a um jogador da liga.</p>
-    <button class="btn btn-ghost" style="width:100%;justify-content:center" id="btnLogoutPending"><i class="fas fa-sign-out-alt"></i> Sair</button>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center" id="btnLogoutPending"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34z"/></svg></span> Sair</button>
   </div>
 </div>
 
@@ -190,15 +190,15 @@
     <div class="header-inner">
       <div class="league-title" id="leagueTitle">LIGA BDNC</div>
       <div class="header-actions">
-        <button class="btn btn-green" id="headerNewGameBtn" style="display:none"><i class="fas fa-plus-circle"></i> Novo Jogo</button>
-        <button class="btn btn-ghost btn-icon" id="btnThemeToggle" title="Modo claro/escuro"><i class="fas fa-moon" id="themeIcon"></i></button>
+        <button class="btn btn-green" id="headerNewGameBtn" style="display:none"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></span> Novo Jogo</button>
+        <button class="btn btn-ghost btn-icon" id="btnThemeToggle" title="Modo claro/escuro"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em" id="themeIcon"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z"/></svg></span></button>
         <div id="headerAvatar" style="cursor:pointer"></div>
         <span class="role-badge" id="roleBadge"></span>
-        <button class="btn btn-ghost btn-icon" id="btnLogout" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="btn btn-ghost btn-icon" id="btnLogout" title="Sair"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34z"/></svg></span></button>
       </div>
     </div>
   </div>
-  <button class="fab hidden" id="fabBtn"><i class="fas fa-plus"></i></button>
+  <button class="fab hidden" id="fabBtn"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg></span></button>
   <div class="main">
     <div class="tabs" id="desktopTabs">
       <button class="tab-btn active" data-tab="tab-ranking">Ranking</button>
@@ -218,32 +218,32 @@
       <div class="stat-card pote"><div class="stat-label">Pote</div><div class="stat-value money" id="statPote">0&#8364;</div><div class="stat-sub">acumulado</div></div>
     </div>
     <div class="tab-content active" id="tab-ranking">
-      <div class="section-title"><i class="fas fa-trophy"></i> Ranking Individual</div>
+      <div class="section-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 576 512" fill="currentColor"><path d="M400 0H176c-26.5 0-48.1 21.8-47.1 48.2.2 5.3.4 10.6.7 15.8H24C10.7 64 0 74.7 0 88c0 92.6 33.5 157 78.5 200.7 44.3 43.1 98.3 64.8 138.1 75.8 23.4 6.5 39.4 26 39.4 45.6 0 20.9-17 37.9-37.9 37.9H192c-17.7 0-32 14.3-32 32s14.3 32 32 32h192c17.7 0 32-14.3 32-32s-14.3-32-32-32h-26.1c-20.9 0-37.9-17-37.9-37.9 0-19.6 15.9-39.2 39.4-45.6 39.9-11 93.9-32.7 138.2-75.8C542.5 245 576 180.6 576 88c0-13.3-10.7-24-24-24H446.4c.3-5.2.5-10.5.7-15.8C448.1 21.8 426.5 0 400 0z"/></svg></span> Ranking Individual</div>
       <div class="table-wrap"><table>
         <thead><tr><th>Pos</th><th>Jogador</th><th>J</th><th>V%</th><th>V</th><th>E</th><th>D</th><th class="hide-mobile">S+</th><th class="hide-mobile">S-</th><th>DS</th><th class="hide-mobile">G+</th><th class="hide-mobile">G-</th><th>DG</th><th class="hide-mobile">Forma</th><th>Pote</th></tr></thead>
         <tbody id="rankingBody"></tbody>
       </table></div>
     </div>
     <div class="tab-content" id="tab-duplas">
-      <div class="section-title"><i class="fas fa-users"></i> Ranking por Duplas</div>
+      <div class="section-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 640 512" fill="currentColor"><path d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg></span> Ranking por Duplas</div>
       <div class="table-wrap"><table>
         <thead><tr><th>Pos</th><th>Dupla</th><th>J</th><th>V%</th><th>V</th><th>E</th><th>D</th><th class="hide-mobile">S+</th><th class="hide-mobile">S-</th><th>DS</th><th class="hide-mobile">G+</th><th class="hide-mobile">G-</th><th>DG</th><th class="hide-mobile">Forma</th></tr></thead>
         <tbody id="pairsRankingBody"></tbody>
       </table></div>
     </div>
     <div class="tab-content" id="tab-confrontos">
-      <div class="section-title"><i class="fas fa-crosshairs"></i> Confrontos Individuais</div>
+      <div class="section-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M500 224h-30.4C455.7 134.5 377.5 56.3 288 42.4V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v30.4C134.5 56.3 56.3 134.5 42.4 224H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h30.4C56.3 377.5 134.5 455.7 224 469.6V500c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12v-30.4C377.5 455.7 455.7 377.5 469.6 288H500c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12zM288 404.6V364c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40.6C165.9 392.2 119.8 346.1 107.4 288H148c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-40.6C119.8 165.9 165.9 119.8 224 107.4V148c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12v-40.6C346.1 119.8 392.2 165.9 404.6 224H364c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40.6C392.2 346.1 346.1 392.2 288 404.6z"/></svg></span> Confrontos Individuais</div>
       <div class="table-wrap"><table><thead id="h2hHeader"></thead><tbody id="h2hBody"></tbody></table></div>
-      <div class="section-title"><i class="fas fa-shield-alt"></i> Confrontos por Duplas</div>
+      <div class="section-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M466.5 83.7l-192-80a48.15 48.15 0 0 0-36.9 0l-192 80C27.7 91.1 16 108.6 16 128c0 198.5 114.5 335.7 221.5 380.3 10.1 4.2 21.8 4.2 31.9 0C371.5 463.6 496 326.4 496 128c0-19.4-11.7-36.9-29.5-44.3z"/></svg></span> Confrontos por Duplas</div>
       <div class="table-wrap"><table><thead id="h2hPairsHeader"></thead><tbody id="h2hPairsBody"></tbody></table></div>
     </div>
     <div class="tab-content" id="tab-historico">
-      <div class="section-title"><i class="fas fa-clock"></i> Historico de Jogos</div>
+      <div class="section-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm57.1 350.1L224.9 294c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12v137.7l63.5 46.2c5.4 3.9 6.5 11.4 2.6 16.8l-28.2 38.8c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg></span> Historico de Jogos</div>
       <div class="table-wrap"><table>
         <thead><tr><th>Data</th><th>Eq. 1</th><th>Eq. 2</th><th>Res.</th><th>Sets</th><th></th></tr></thead>
         <tbody id="gameHistoryBody"></tbody>
       </table></div>
-      <div class="section-title" style="margin-top:8px"><i class="fas fa-archive"></i> Temporadas</div>
+      <div class="section-title" style="margin-top:8px"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg></span> Temporadas</div>
       <div id="seasonsContainer"><p style="color:var(--muted);font-size:14px">Nenhuma temporada guardada.</p></div>
     </div>
     <div class="tab-content" id="tab-admin">
@@ -253,11 +253,11 @@
         <div class="form-group"><label>Nome da Liga</label><input type="text" id="cfgLeagueName" placeholder="Liga BDNC"></div>
         <div class="form-group"><label>Pote por Derrota (euros)</label><input type="number" id="cfgPoteValue" placeholder="5" min="0" step="0.5"></div>
         <div class="form-group"><label>Pote por Empate (euros)</label><input type="number" id="cfgPoteDraw" placeholder="2.5" min="0" step="0.5"></div>
-        <button class="btn btn-primary" id="btnSaveConfig"><i class="fas fa-save"></i> Guardar</button>
+        <button class="btn btn-primary" id="btnSaveConfig"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h42v104c0 13.255 10.745 24 24 24h176c13.255 0 24-10.745 24-24V83.882l78.243 78.243a6 6 0 0 1 1.757 4.243V426a6 6 0 0 1-6 6z"/></svg></span> Guardar</button>
       </div>
       <div class="admin-section">
         <h3>Gerir Jogadores</h3>
-        <div style="display:flex;gap:10px;margin-bottom:14px"><input type="text" id="newPlayerName" placeholder="Nome do novo jogador" style="flex:1"><button class="btn btn-primary" id="btnAddPlayer"><i class="fas fa-plus"></i></button></div>
+        <div style="display:flex;gap:10px;margin-bottom:14px"><input type="text" id="newPlayerName" placeholder="Nome do novo jogador" style="flex:1"><button class="btn btn-primary" id="btnAddPlayer"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg></span></button></div>
         <div id="playersAdminList"></div>
       </div>
       <div class="admin-section">
@@ -268,7 +268,7 @@
         <h3>Importar Jogos</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Importa jogos a partir do ficheiro JSON gerado. Os jogos existentes serao substituidos.</p>
         <label class="btn btn-ghost" style="cursor:pointer;width:100%;justify-content:center">
-          <i class="fas fa-upload"></i> Selecionar ficheiro JSON
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24z"/></svg></span> Selecionar ficheiro JSON
           <input type="file" id="importGamesInput" accept=".json" style="display:none">
         </label>
         <div id="importPreview" style="display:none;margin-top:12px">
@@ -277,23 +277,23 @@
             <div id="importPreviewText" style="font-size:13px"></div>
           </div>
           <button class="btn btn-green" id="btnConfirmImport" style="width:100%;justify-content:center">
-            <i class="fas fa-check"></i> Confirmar Importacao
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span> Confirmar Importacao
           </button>
         </div>
       </div>
       <div class="admin-section">
         <h3>Nova Temporada</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Arquiva os dados e reinicia. Os jogadores sao mantidos.</p>
-        <button class="btn btn-red" id="btnNewSeason"><i class="fas fa-redo"></i> Iniciar Nova Temporada</button>
+        <button class="btn btn-red" id="btnNewSeason"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M500.33 0h-47.41a12 12 0 0 0-12 12.57l4 82.76A247.42 247.42 0 0 0 256 8C119.34 8 7.9 119.53 8 256.19 8.1 393.07 119.1 504 256 504a247.1 247.1 0 0 0 166.18-63.91 12 12 0 0 0 .48-17.43l-34-34a12 12 0 0 0-16.38-.55A176 176 0 1 1 402.1 157.8l-101.53-4.87a12 12 0 0 0-12.57 12v47.41a12 12 0 0 0 12 12h200.33a12 12 0 0 0 12-12V12a12 12 0 0 0-12-12z"/></svg></span> Iniciar Nova Temporada</button>
       </div>
     </div>
   </div>
   <nav class="bottom-nav">
-    <button class="bottom-nav-btn active" data-tab="tab-ranking"><i class="fas fa-trophy"></i>Ranking</button>
-    <button class="bottom-nav-btn" data-tab="tab-duplas"><i class="fas fa-users"></i>Duplas</button>
-    <button class="bottom-nav-btn" data-tab="tab-confrontos"><i class="fas fa-crosshairs"></i>Confrontos</button>
-    <button class="bottom-nav-btn" data-tab="tab-historico"><i class="fas fa-clock"></i>Historico</button>
-    <button class="bottom-nav-btn admin-only" data-tab="tab-admin" style="display:none"><i class="fas fa-cog"></i>Admin</button>
+    <button class="bottom-nav-btn active" data-tab="tab-ranking"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 576 512" fill="currentColor"><path d="M400 0H176c-26.5 0-48.1 21.8-47.1 48.2.2 5.3.4 10.6.7 15.8H24C10.7 64 0 74.7 0 88c0 92.6 33.5 157 78.5 200.7 44.3 43.1 98.3 64.8 138.1 75.8 23.4 6.5 39.4 26 39.4 45.6 0 20.9-17 37.9-37.9 37.9H192c-17.7 0-32 14.3-32 32s14.3 32 32 32h192c17.7 0 32-14.3 32-32s-14.3-32-32-32h-26.1c-20.9 0-37.9-17-37.9-37.9 0-19.6 15.9-39.2 39.4-45.6 39.9-11 93.9-32.7 138.2-75.8C542.5 245 576 180.6 576 88c0-13.3-10.7-24-24-24H446.4c.3-5.2.5-10.5.7-15.8C448.1 21.8 426.5 0 400 0z"/></svg></span>Ranking</button>
+    <button class="bottom-nav-btn" data-tab="tab-duplas"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 640 512" fill="currentColor"><path d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg></span>Duplas</button>
+    <button class="bottom-nav-btn" data-tab="tab-confrontos"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M500 224h-30.4C455.7 134.5 377.5 56.3 288 42.4V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v30.4C134.5 56.3 56.3 134.5 42.4 224H12c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h30.4C56.3 377.5 134.5 455.7 224 469.6V500c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12v-30.4C377.5 455.7 455.7 377.5 469.6 288H500c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12zM288 404.6V364c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40.6C165.9 392.2 119.8 346.1 107.4 288H148c6.6 0 12-5.4 12-12v-40c0-6.6-5.4-12-12-12h-40.6C119.8 165.9 165.9 119.8 224 107.4V148c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12v-40.6C346.1 119.8 392.2 165.9 404.6 224H364c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40.6C392.2 346.1 346.1 392.2 288 404.6z"/></svg></span>Confrontos</button>
+    <button class="bottom-nav-btn" data-tab="tab-historico"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm57.1 350.1L224.9 294c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12v137.7l63.5 46.2c5.4 3.9 6.5 11.4 2.6 16.8l-28.2 38.8c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg></span>Historico</button>
+    <button class="bottom-nav-btn admin-only" data-tab="tab-admin" style="display:none"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"/></svg></span>Admin</button>
   </nav>
 </div>
 
@@ -306,8 +306,8 @@
       <div class="form-group"><label>Selecionar Jogadores (4)</label><div class="player-grid" id="playerGrid"></div></div>
       <div id="estrangeiroWrap" style="display:none;margin-top:-8px;margin-bottom:16px"><input type="text" id="estrangeiroName" placeholder="Nome do convidado"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <button class="btn btn-primary" id="btnSortear" style="justify-content:center"><i class="fas fa-random"></i> Sortear</button>
-        <button class="btn btn-ghost" id="btnManual" style="justify-content:center"><i class="fas fa-hand-pointer"></i> Definir</button>
+        <button class="btn btn-primary" id="btnSortear" style="justify-content:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M504.971 359.029c9.373 9.373 9.373 24.569 0 33.941l-80 79.984c-15.01 15.01-40.971 4.49-40.971-16.971V416h-58.785a12.004 12.004 0 0 1-8.773-3.812l-70.556-75.261 53.333-56.887 60.554 64.652H384v-48.019c0-21.46 25.961-31.979 40.971-16.971l80 79.984zM12 176h84.785l93.333 99.546 53.333-56.887L162.115 115.9a12 12 0 0 0-8.773-3.9H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12zm492.971-93.029l-80-79.984c-15.01-15.01-40.971-4.49-40.971 16.971V68h-58.785a12 12 0 0 0-8.773 3.812L96.223 382.556A12 12 0 0 1 87.45 386.4H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h75.45c3.439 0 6.562-1.346 8.773-3.786L404 152.32a12 12 0 0 1 8.773-3.812H384v48.019c0 21.46 25.961 31.979 40.971 16.971l80-79.984c9.372-9.372 9.372-24.568 0-33.94z"/></svg></span> Sortear</button>
+        <button class="btn btn-ghost" id="btnManual" style="justify-content:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M448 240v96c0 3.084-.356 6.159-1.063 9.162l-32 136C410.686 499.23 394.562 512 376 512H168a40 40 0 0 1-32.35-16.47l-128-176c-12.993-17.866-9.043-42.883 8.822-55.876 17.866-12.993 42.883-9.043 55.876 8.822L96 304V64c0-17.673 14.327-32 32-32s32 14.327 32 32v192h16V48c0-17.673 14.327-32 32-32s32 14.327 32 32v208h16V64c0-17.673 14.327-32 32-32s32 14.327 32 32v192h16v-48c0-17.673 14.327-32 32-32s32 14.327 32 32z"/></svg></span> Definir</button>
       </div>
     </div>
     <div class="teams-grid" id="teamsDisplay" style="display:none">
@@ -323,8 +323,8 @@
     </div>
     <div class="form-group"><label>Data do Jogo</label><input type="date" id="gameDate"></div>
     <div id="setsContainer"></div>
-    <button class="btn btn-ghost" id="btnAddSet" style="width:100%;justify-content:center;margin-bottom:14px"><i class="fas fa-plus"></i> Adicionar Set</button>
-    <button class="btn btn-green" id="btnSubmitGame" style="width:100%;justify-content:center;padding:14px"><i class="fas fa-check-circle"></i> Registar Jogo</button>
+    <button class="btn btn-ghost" id="btnAddSet" style="width:100%;justify-content:center;margin-bottom:14px"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg></span> Adicionar Set</button>
+    <button class="btn btn-green" id="btnSubmitGame" style="width:100%;justify-content:center;padding:14px"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"/></svg></span> Registar Jogo</button>
   </div>
 </div>
 
@@ -335,10 +335,10 @@
     <div class="modal-header"><span class="modal-title">Perfil</span><button class="modal-close" id="btnCloseProfileModal">&times;</button></div>
     <div class="avatar-upload">
       <div id="avatarPreviewWrap"><div style="width:90px;height:90px;border-radius:50%;background:var(--surface3);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted)">?</div></div>
-      <label class="btn btn-ghost" style="cursor:pointer;margin:0"><i class="fas fa-camera"></i> Alterar foto<input type="file" id="avatarInput" accept="image/*" style="display:none"></label>
+      <label class="btn btn-ghost" style="cursor:pointer;margin:0"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M512 144v288c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48h88l12.3-32.9c7-18.7 24.9-31.1 44.9-31.1h125.5c20 0 37.9 12.4 44.9 31.1L376 96h88c26.5 0 48 21.5 48 48zM376 288c0-66.2-53.8-120-120-120s-120 53.8-120 120 53.8 120 120 120 120-53.8 120-120zm-45 0c0 41.4-33.6 75-75 75s-75-33.6-75-75 33.6-75 75-75 75 33.6 75 75z"/></svg></span> Alterar foto<input type="file" id="avatarInput" accept="image/*" style="display:none"></label>
     </div>
     <div class="form-group"><label>Nome</label><input type="text" id="profileName" placeholder="O teu nome"></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center" id="btnSaveProfile"><i class="fas fa-save"></i> Guardar</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" id="btnSaveProfile"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h42v104c0 13.255 10.745 24 24 24h176c13.255 0 24-10.745 24-24V83.882l78.243 78.243a6 6 0 0 1 1.757 4.243V426a6 6 0 0 1-6 6z"/></svg></span> Guardar</button>
   </div>
 </div>
 
@@ -678,7 +678,8 @@ document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("cli
 // Theme
 document.getElementById("btnThemeToggle").onclick=()=>{
   const l=document.body.classList.toggle("light");
-  document.getElementById("themeIcon").className=l?"fas fa-sun":"fas fa-moon";
+  const ti=document.getElementById("themeIcon");
+  if(ti){const sunSvg='<svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1z"/></svg>';const moonSvg='<svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z"/></svg>';ti.innerHTML=l?sunSvg:moonSvg;}
   document.getElementById("themeColorMeta").content=l?"#F0F2F5":"#0E0E0E";
   localStorage.setItem("theme",l?"light":"dark");
 };
@@ -687,7 +688,7 @@ document.getElementById("btnThemeToggle").onclick=()=>{
 function toast(msg,type="success"){
   const ic={success:"fa-check-circle",error:"fa-times-circle",warning:"fa-exclamation-triangle"};
   const el=document.createElement("div");el.className=`toast ${type}`;
-  el.innerHTML=`<i class="fas ${ic[type]}"></i> ${msg}`;
+  const emo={success:"✓",error:"✕",warning:"⚠"};el.innerHTML=`<span style="font-weight:700">${emo[type]||"•"}</span> ${msg}`;
   document.getElementById("toast-container").appendChild(el);setTimeout(()=>el.remove(),3000);
 }
 
@@ -731,7 +732,7 @@ document.getElementById("btnSaveConfig").onclick=async()=>{
 function updatePlayersAdminList(){
   if(CR!=="admin")return;
   const el=document.getElementById("playersAdminList");if(!el)return;
-  el.innerHTML=PLY.map(p=>`<div class="user-row">${avatarHtml(p,32)}<span class="user-email" style="margin-left:8px">${p}</span><button class="btn btn-red btn-icon" style="padding:6px 10px;font-size:12px" onclick="window.__rmPly('${p}')"><i class="fas fa-trash"></i></button></div>`).join("")||"<p style='color:var(--muted);font-size:13px'>Sem jogadores.</p>";
+  el.innerHTML=PLY.map(p=>`<div class="user-row">${avatarHtml(p,32)}<span class="user-email" style="margin-left:8px">${p}</span><button class="btn btn-red btn-icon" style="padding:6px 10px;font-size:12px" onclick="window.__rmPly('${p}')"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"/></svg></span></button></div>`).join("")||"<p style='color:var(--muted);font-size:13px'>Sem jogadores.</p>";
 }
 window.__rmPly=name=>{if(CR!=="admin")return;showConfirm("Remover Jogador",`Remover "${name}"?`,async()=>{await setDoc(doc(db,"data","players"),{list:PLY.filter(p=>p!==name)});await setDoc(doc(db,"data","games"),{list:GH.filter(g=>!g.team1.includes(name)&&!g.team2.includes(name))});toast(`"${name}" removido.`);});};
 document.getElementById("btnAddPlayer").onclick=async()=>{
@@ -765,9 +766,9 @@ async function loadUsers(){
               <option value="__novo__">+ Novo jogador</option>
             </select>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-green" style="flex:1;justify-content:center;padding:8px;font-size:12px" onclick="window.__approveUser('${u.id}','jogador')"><i class="fas fa-futbol"></i> Jogador</button>
-              <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:8px;font-size:12px" onclick="window.__approveUser('${u.id}','viewer')"><i class="fas fa-eye"></i> Viewer</button>
-              <button class="btn btn-red" style="padding:8px 10px;font-size:12px" onclick="window.__rejectUser('${u.id}','${u.email}')"><i class="fas fa-times"></i></button>
+              <button class="btn btn-green" style="flex:1;justify-content:center;padding:8px;font-size:12px" onclick="window.__approveUser('${u.id}','jogador')"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 496 512" fill="currentColor"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm-48.8 344.8l-48-16-48 16L88 320l16-48-16-48 64-21.6 48 16 48-16 64 21.6-16 48 16 48-64 32.8zm128-112l-32-64 32-64 64 32v64l-64 32z"/></svg></span> Jogador</button>
+              <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:8px;font-size:12px" onclick="window.__approveUser('${u.id}','viewer')"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 576 512" fill="currentColor"><path d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"/></svg></span> Viewer</button>
+              <button class="btn btn-red" style="padding:8px 10px;font-size:12px" onclick="window.__rejectUser('${u.id}','${u.email}')"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 352 512" fill="currentColor"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg></span></button>
             </div>
           </div>
         </div>`).join("")}
@@ -787,7 +788,7 @@ async function loadUsers(){
           </option>`;
         }).join("")}
       </select>
-      <button class="btn btn-ghost" style="padding:5px 8px;font-size:11px" onclick="window.__assocPlayer('${u.id}')" title="Associar jogador"><i class="fas fa-link"></i></button>`:"";
+      <button class="btn btn-ghost" style="padding:5px 8px;font-size:11px" onclick="window.__assocPlayer('${u.id}')" title="Associar jogador"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197z"/></svg></span></button>`:"";
     return`<div class="user-row" style="flex-wrap:wrap;gap:8px">
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px">${avatarHtml(u.playerName||u.name,24)}<span class="user-email">${u.name||u.email}</span></div>
@@ -800,7 +801,7 @@ async function loadUsers(){
           <option value="jogador" ${u.role==="jogador"?"selected":""}>Jogador</option>
           <option value="admin" ${u.role==="admin"?"selected":""}>Admin</option>
         </select>
-        <button class="btn btn-red btn-icon" style="padding:5px 8px;font-size:11px" onclick="window.__deleteUser('${u.id}','${u.email}')" title="Eliminar utilizador"><i class="fas fa-trash"></i></button>
+        <button class="btn btn-red btn-icon" style="padding:5px 8px;font-size:11px" onclick="window.__deleteUser('${u.id}','${u.email}')" title="Eliminar utilizador"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"/></svg></span></button>
       </div>
     </div>`;
   }).join("");
@@ -1139,8 +1140,8 @@ function updateGameHistoryDisplay(){
     const[s1,s2]=game.result.split("-").map(Number),draw=s1===s2;
     const sets=(game.setScores||[]).map(s=>{const a=s.a??s[0],b=s.b??s[1];return`<span style="${a>b?"font-weight:700":"color:var(--muted)"}">${a}</span>-<span style="${b>a?"font-weight:700":"color:var(--muted)"}">${b}</span>`;}).join(" ");
     const row=document.createElement("tr");row.dataset.gameId=game.id;
-    const btns=`<div class="game-actions">${CR==="admin"?`<button class="btn-game-action" onclick="window.__editGame(${game.id})" title="Editar"><i class="fas fa-pen"></i></button>`:""}<button class="btn-game-action btn-game-share" onclick="window.__shareGame(${game.id})" title="Partilhar"><i class="fas fa-share-alt"></i></button>${CR==="admin"?`<button class="btn-game-action btn-game-delete" onclick="window.__delGame(${game.id})" title="Eliminar"><i class="fas fa-trash"></i></button>`:""}</div>`;
-    row.innerHTML=`<td style="color:var(--muted);font-size:12px;white-space:nowrap">${game.date}</td><td class="${!draw&&s1>s2?"game-row-winner":""}" style="font-size:13px">${!draw&&s1>s2?'<i class="fas fa-trophy winner-icon"></i>':""} ${game.team1.join(" / ")}</td><td class="${!draw&&s2>s1?"game-row-winner":""}" style="font-size:13px">${!draw&&s2>s1?'<i class="fas fa-trophy winner-icon"></i>':""} ${game.team2.join(" / ")}</td><td style="font-weight:700;white-space:nowrap">${game.result}</td><td style="font-size:12px;white-space:nowrap">${sets}</td><td>${btns}</td>`;
+    const btns=`<div class="game-actions">${CR==="admin"?`<button class="btn-game-action" onclick="window.__editGame(${game.id})" title="Editar"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"/></svg></span></button>`:""}<button class="btn-game-action btn-game-share" onclick="window.__shareGame(${game.id})" title="Partilhar"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M352 320c-22.608 0-43.387 7.819-59.79 20.895l-102.486-64.054a96.551 96.551 0 0 0 0-41.683l102.486-64.054C308.613 184.181 329.392 192 352 192c53.019 0 96-42.981 96-96S405.019 0 352 0s-96 42.981-96 96c0 7.158.79 14.13 2.276 20.841L155.79 180.895C139.387 167.819 118.608 160 96 160c-53.019 0-96 42.981-96 96s42.981 96 96 96c22.608 0 43.387-7.819 59.79-20.895l102.486 64.054A96.301 96.301 0 0 0 256 416c0 53.019 42.981 96 96 96s96-42.981 96-96-42.981-96-96-96z"/></svg></span></button>${CR==="admin"?`<button class="btn-game-action btn-game-delete" onclick="window.__delGame(${game.id})" title="Eliminar"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"/></svg></span></button>`:""}</div>`;
+    row.innerHTML=`<td style="color:var(--muted);font-size:12px;white-space:nowrap">${game.date}</td><td class="${!draw&&s1>s2?"game-row-winner":""}" style="font-size:13px">${!draw&&s1>s2?'<span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 576 512" fill="currentColor"><path d="M400 0H176c-26.5 0-48.1 21.8-47.1 48.2.2 5.3.4 10.6.7 15.8H24C10.7 64 0 74.7 0 88c0 92.6 33.5 157 78.5 200.7 44.3 43.1 98.3 64.8 138.1 75.8 23.4 6.5 39.4 26 39.4 45.6 0 20.9-17 37.9-37.9 37.9H192c-17.7 0-32 14.3-32 32s14.3 32 32 32h192c17.7 0 32-14.3 32-32s-14.3-32-32-32h-26.1c-20.9 0-37.9-17-37.9-37.9 0-19.6 15.9-39.2 39.4-45.6 39.9-11 93.9-32.7 138.2-75.8C542.5 245 576 180.6 576 88c0-13.3-10.7-24-24-24H446.4c.3-5.2.5-10.5.7-15.8C448.1 21.8 426.5 0 400 0z"/></svg></span>':""} ${game.team1.join(" / ")}</td><td class="${!draw&&s2>s1?"game-row-winner":""}" style="font-size:13px">${!draw&&s2>s1?'<span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 576 512" fill="currentColor"><path d="M400 0H176c-26.5 0-48.1 21.8-47.1 48.2.2 5.3.4 10.6.7 15.8H24C10.7 64 0 74.7 0 88c0 92.6 33.5 157 78.5 200.7 44.3 43.1 98.3 64.8 138.1 75.8 23.4 6.5 39.4 26 39.4 45.6 0 20.9-17 37.9-37.9 37.9H192c-17.7 0-32 14.3-32 32s14.3 32 32 32h192c17.7 0 32-14.3 32-32s-14.3-32-32-32h-26.1c-20.9 0-37.9-17-37.9-37.9 0-19.6 15.9-39.2 39.4-45.6 39.9-11 93.9-32.7 138.2-75.8C542.5 245 576 180.6 576 88c0-13.3-10.7-24-24-24H446.4c.3-5.2.5-10.5.7-15.8C448.1 21.8 426.5 0 400 0z"/></svg></span>':""} ${game.team2.join(" / ")}</td><td style="font-weight:700;white-space:nowrap">${game.result}</td><td style="font-size:12px;white-space:nowrap">${sets}</td><td>${btns}</td>`;
     body.appendChild(row);
   });
 }
@@ -1159,22 +1160,22 @@ function updateSeasonHistory(){
         <div style="flex:1;min-width:0">
           <div id="seasonNameDisplay_${i}" style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <h4 style="margin:0">${s.name}</h4>
-            ${CR==="admin"?`<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;flex-shrink:0" onclick="window.__editSeasonName(${i})" title="Editar nome"><i class="fas fa-pen"></i></button>`:""}
+            ${CR==="admin"?`<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;flex-shrink:0" onclick="window.__editSeasonName(${i})" title="Editar nome"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"/></svg></span></button>`:""}
           </div>
           <div id="seasonNameEdit_${i}" style="display:none;margin-bottom:8px">
             <div style="display:flex;gap:8px;align-items:center">
               <input type="text" id="seasonNameField_${i}" value="${s.name}" style="flex:1;padding:8px 10px;font-size:14px">
-              <button class="btn btn-primary" style="padding:7px 12px;font-size:12px;flex-shrink:0" onclick="window.__saveSeasonName(${i})"><i class="fas fa-check"></i></button>
-              <button class="btn btn-ghost" style="padding:7px 10px;font-size:12px;flex-shrink:0" onclick="window.__cancelSeasonEdit(${i})"><i class="fas fa-times"></i></button>
+              <button class="btn btn-primary" style="padding:7px 12px;font-size:12px;flex-shrink:0" onclick="window.__saveSeasonName(${i})"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 512 512" fill="currentColor"><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span></button>
+              <button class="btn btn-ghost" style="padding:7px 10px;font-size:12px;flex-shrink:0" onclick="window.__cancelSeasonEdit(${i})"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 352 512" fill="currentColor"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg></span></button>
             </div>
           </div>
           <div class="season-meta">
-            <span><i class="fas fa-calendar"></i> ${s.date}</span>
-            <span><i class="fas fa-gamepad"></i> ${s.games?.length||0} jogos</span>
-            <span><i class="fas fa-trophy"></i> ${s.champion}</span>
+            <span><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48zm16 400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192h448v272z"/></svg></span> ${s.date}</span>
+            <span><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 640 512" fill="currentColor"><path d="M480 96H160C71.6 96 0 167.6 0 256s71.6 160 160 160c44.8 0 85.2-18.4 114.2-48h91.5c29.1 29.6 69.5 48 114.4 48 88.4 0 160-71.6 160-160S568.4 96 480 96zM256 276c0 6.6-5.4 12-12 12h-52v52c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-52H76c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h52v-52c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h52c6.6 0 12 5.4 12 12v40zm184 68c-26.5 0-48-21.5-48-48s21.5-48 48-48 48 21.5 48 48-21.5 48-48 48zm80-80c-26.5 0-48-21.5-48-48s21.5-48 48-48 48 21.5 48 48-21.5 48-48 48z"/></svg></span> ${s.games?.length||0} jogos</span>
+            <span><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 576 512" fill="currentColor"><path d="M400 0H176c-26.5 0-48.1 21.8-47.1 48.2.2 5.3.4 10.6.7 15.8H24C10.7 64 0 74.7 0 88c0 92.6 33.5 157 78.5 200.7 44.3 43.1 98.3 64.8 138.1 75.8 23.4 6.5 39.4 26 39.4 45.6 0 20.9-17 37.9-37.9 37.9H192c-17.7 0-32 14.3-32 32s14.3 32 32 32h192c17.7 0 32-14.3 32-32s-14.3-32-32-32h-26.1c-20.9 0-37.9-17-37.9-37.9 0-19.6 15.9-39.2 39.4-45.6 39.9-11 93.9-32.7 138.2-75.8C542.5 245 576 180.6 576 88c0-13.3-10.7-24-24-24H446.4c.3-5.2.5-10.5.7-15.8C448.1 21.8 426.5 0 400 0z"/></svg></span> ${s.champion}</span>
           </div>
         </div>
-        ${CR==="admin"?`<button class="btn btn-red" style="padding:6px 10px;font-size:12px;flex-shrink:0" onclick="window.__delSeason(${i})" title="Eliminar"><i class="fas fa-trash"></i></button>`:""}
+        ${CR==="admin"?`<button class="btn btn-red" style="padding:6px 10px;font-size:12px;flex-shrink:0" onclick="window.__delSeason(${i})" title="Eliminar"><span style="display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em"><svg style="width:1em;height:1em" viewBox="0 0 448 512" fill="currentColor"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"/></svg></span></button>`:""}
       </div>
     </div>`).join("");
 }
