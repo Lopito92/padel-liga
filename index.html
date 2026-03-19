@@ -8,7 +8,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Liga BDNC">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎾</text></svg>">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="logo.png"><text y='.9em' font-size='90'>🎾</text></svg>">
   <link rel="manifest" id="pwaManifest">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
@@ -188,7 +189,7 @@
 <div id="appScreen">
   <div class="header">
     <div class="header-inner">
-      <div class="league-title" id="leagueTitle">LIGA BDNC</div>
+      <div class="league-title" id="leagueTitle" style="display:flex;align-items:center;gap:8px"><img src="logo.png" id="headerLogo" style="height:36px;width:auto;object-fit:contain" onerror="this.style.display='none'">LIGA BDNC</div>
       <div class="header-actions">
         <button class="btn btn-green" id="headerNewGameBtn" style="display:none"><i class="fas fa-plus-circle"></i> Novo Jogo</button>
         <button class="btn btn-ghost btn-icon" id="btnThemeToggle" title="Modo claro/escuro"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -361,7 +362,7 @@ const ADMIN_EMAIL="mflopo92@gmail.com";
 const app=initializeApp(FC),auth=getAuth(app),db=getFirestore(app);
 
 // PWA manifest
-const mf={name:"Liga BDNC",short_name:"BDNC",start_url:location.pathname,display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"https://placehold.co/192x192/C9A84C/000?text=B",sizes:"192x192",type:"image/png"}]};
+const mf={name:"Liga BDNC",short_name:"BDNC",start_url:location.pathname,display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"logo.png",sizes:"512x512",type:"image/png"},{src:"logo.png",sizes:"192x192",type:"image/png"}]};
 document.getElementById("pwaManifest").href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:"application/json"}));
 
 // Theme
@@ -431,7 +432,7 @@ function applyRole(){
 function subscribeData(){
   unsubs.forEach(u=>u());unsubs=[];
   unsubs.push(onSnapshot(doc(db,"data","config"),s=>{
-    if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").textContent=(CFG.emoji||""+" ")+CFG.name;document.title=CFG.name;
+    if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").childNodes[document.getElementById("leagueTitle").childNodes.length-1].textContent=" "+(CFG.name||"Liga BDNC");document.title=CFG.name||"Liga BDNC";
     if(CR==="admin"){
       const el1=document.getElementById("cfgLeagueName"),el2=document.getElementById("cfgSeasonName"),el3=document.getElementById("cfgPoteValue"),el4=document.getElementById("cfgPoteDraw");
       if(el1)el1.value=CFG.name||"";if(el2)el2.value=CFG.seasonName||"";if(el3)el3.value=CFG.poteDerrota??5;if(el4)el4.value=CFG.poteEmpate??2.5;}}
