@@ -6,10 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="theme-color" content="#0E0E0E" id="themeColorMeta">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Liga BDNC">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎾</text></svg>">
   <link rel="manifest" id="pwaManifest">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
   <style>
     :root{--gold:#C9A84C;--gold-light:#E8C97A;--green:#27AE60;--red:#C0392B;--red-dark:#8B0000;--bg:#0E0E0E;--surface:#161616;--surface2:#1E1E1E;--surface3:#282828;--border:#2E2E2E;--text:#F0F0F0;--muted:#888;--money:#85bb65;--shadow:rgba(0,0,0,0.5)}
     body.light{--bg:#F0F2F5;--surface:#fff;--surface2:#F7F8FA;--surface3:#ECEEF1;--border:#DDE1E7;--text:#1A1A2E;--muted:#6B7280;--shadow:rgba(0,0,0,0.08)}
@@ -357,7 +360,7 @@ const ADMIN_EMAIL="mflopo92@gmail.com";
 const app=initializeApp(FC),auth=getAuth(app),db=getFirestore(app);
 
 // PWA manifest
-const mf={name:"Liga BDNC",short_name:"BDNC",start_url:"./",display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"https://placehold.co/192x192/C9A84C/000?text=B",sizes:"192x192",type:"image/png"}]};
+const mf={name:"Liga BDNC",short_name:"BDNC",start_url:location.pathname,display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"https://placehold.co/192x192/C9A84C/000?text=B",sizes:"192x192",type:"image/png"}]};
 document.getElementById("pwaManifest").href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:"application/json"}));
 
 // Theme
@@ -365,7 +368,7 @@ const th=localStorage.getItem("theme")||"dark";
 if(th==="light"){document.body.classList.add("light");document.getElementById("themeIcon").className="fas fa-sun";document.getElementById("themeColorMeta").content="#F0F2F5";}
 
 // State
-let CU=null,CR="viewer",CUD=null,GH=[],PS={},PAIRS={},H2H={},PH2H={},PLY=[],SH=[],CFG={name:"Liga BDNC",emoji:"",poteDerrota:5,poteEmpate:2.5};
+let CU=null,CR="viewer",CUD=null,GH=[],PS={},PAIRS={},H2H={},PH2H={},PLY=[],SH=[],CFG={name:"Liga BDNC",emoji:"",seasonName:"",poteDerrota:5,poteEmpate:2.5};
 let selP=[],tDrawn=false,setCount=0,cT1=[],cT2=[],mT1=[],mT2=[],confCB=null,unsubs=[],editId=null,AVT={},DSP=[];
 let selSeason="current";
 
@@ -428,7 +431,7 @@ function subscribeData(){
   unsubs.forEach(u=>u());unsubs=[];
   unsubs.push(onSnapshot(doc(db,"data","config"),s=>{
     if(s.exists()){CFG={...CFG,...s.data()};document.getElementById("leagueTitle").textContent=(CFG.emoji||""+" ")+CFG.name;document.title=CFG.name;
-    if(CR==="admin"){document.getElementById("cfgLeagueName").value=CFG.name||"";document.getElementById("cfgPoteValue").value=CFG.poteDerrota??5;document.getElementById("cfgPoteDraw").value=CFG.poteEmpate??2.5;}}
+    if(CR==="admin"){document.getElementById("cfgLeagueName").value=CFG.name||"";document.getElementById("cfgSeasonName").value=CFG.seasonName||"";document.getElementById("cfgPoteValue").value=CFG.poteDerrota??5;document.getElementById("cfgPoteDraw").value=CFG.poteEmpate??2.5;}}
   }));
   unsubs.push(onSnapshot(doc(db,"data","players"),s=>{PLY=s.exists()?(s.data().list||[]):[];updatePlayerGrid();updatePlayersAdminList();updateDashboard();loadAvatars();}));
   unsubs.push(onSnapshot(doc(db,"data","games"),s=>{GH=s.exists()?(s.data().list||[]):[];GH.sort((a,b)=>new Date(b.date)-new Date(a.date));applySeasonFilter();}));
@@ -439,7 +442,7 @@ function subscribeData(){
 // Season filter
 function updateSeasonFilterUI(){
   const sel=document.getElementById("seasonFilter");
-  sel.innerHTML='<option value="current">Temporada Atual</option>';
+  sel.innerHTML=`<option value="current">${CFG.seasonName?CFG.seasonName+" (atual)":"Temporada Atual"}</option>`;
   SH.forEach((s,i)=>sel.innerHTML+=`<option value="${i}">${s.name} (${s.date})</option>`);
   sel.value=selSeason;
 }
@@ -716,7 +719,8 @@ document.getElementById("btnLogoutPending").onclick=()=>signOut(auth);
 // Config admin
 document.getElementById("btnSaveConfig").onclick=async()=>{
   if(CR!=="admin")return;
-  await setDoc(doc(db,"data","config"),{name:document.getElementById("cfgLeagueName").value.trim()||"Liga BDNC",emoji:"",poteDerrota:parseFloat(document.getElementById("cfgPoteValue").value)||5,poteEmpate:parseFloat(document.getElementById("cfgPoteDraw").value)||2.5});
+  const seasonName=document.getElementById("cfgSeasonName").value.trim();
+  await setDoc(doc(db,"data","config"),{name:document.getElementById("cfgLeagueName").value.trim()||"Liga BDNC",emoji:"",seasonName,poteDerrota:parseFloat(document.getElementById("cfgPoteValue").value)||5,poteEmpate:parseFloat(document.getElementById("cfgPoteDraw").value)||2.5});
   toast("Configuracao guardada!");
 };
 
@@ -1149,18 +1153,45 @@ function updateSeasonHistory(){
   el.innerHTML=SH.map((s,i)=>`
     <div class="season-card" style="position:relative">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
-        <div>
-          <h4>${s.name}</h4>
+        <div style="flex:1;min-width:0">
+          <div id="seasonNameDisplay_${i}" style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <h4 style="margin:0">${s.name}</h4>
+            ${CR==="admin"?`<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;flex-shrink:0" onclick="window.__editSeasonName(${i})" title="Editar nome"><i class="fas fa-pen"></i></button>`:""}
+          </div>
+          <div id="seasonNameEdit_${i}" style="display:none;margin-bottom:8px">
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="seasonNameField_${i}" value="${s.name}" style="flex:1;padding:8px 10px;font-size:14px">
+              <button class="btn btn-primary" style="padding:7px 12px;font-size:12px;flex-shrink:0" onclick="window.__saveSeasonName(${i})"><i class="fas fa-check"></i></button>
+              <button class="btn btn-ghost" style="padding:7px 10px;font-size:12px;flex-shrink:0" onclick="window.__cancelSeasonEdit(${i})"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
           <div class="season-meta">
             <span><i class="fas fa-calendar"></i> ${s.date}</span>
             <span><i class="fas fa-gamepad"></i> ${s.games?.length||0} jogos</span>
             <span><i class="fas fa-trophy"></i> ${s.champion}</span>
           </div>
         </div>
-        ${CR==="admin"?`<button class="btn btn-red" style="padding:6px 10px;font-size:12px;flex-shrink:0" onclick="window.__delSeason(${i})" title="Eliminar temporada"><i class="fas fa-trash"></i></button>`:""}
+        ${CR==="admin"?`<button class="btn btn-red" style="padding:6px 10px;font-size:12px;flex-shrink:0" onclick="window.__delSeason(${i})" title="Eliminar"><i class="fas fa-trash"></i></button>`:""}
       </div>
     </div>`).join("");
 }
+window.__editSeasonName=idx=>{
+  document.getElementById(`seasonNameDisplay_${idx}`).style.display="none";
+  document.getElementById(`seasonNameEdit_${idx}`).style.display="block";
+  document.getElementById(`seasonNameField_${idx}`)?.focus();
+};
+window.__cancelSeasonEdit=idx=>{
+  document.getElementById(`seasonNameDisplay_${idx}`).style.display="flex";
+  document.getElementById(`seasonNameEdit_${idx}`).style.display="none";
+};
+window.__saveSeasonName=async(idx)=>{
+  if(CR!=="admin")return;
+  const newName=document.getElementById(`seasonNameField_${idx}`)?.value.trim();
+  if(!newName){toast("Nome invalido.","error");return;}
+  const newSH=SH.map((s,i)=>i===idx?{...s,name:newName}:s);
+  await setDoc(doc(db,"data","seasons"),{list:newSH});
+  toast("Nome atualizado!");
+};
 window.__delSeason=async(idx)=>{
   if(CR!=="admin")return;
   const s=SH[idx];if(!s)return;
