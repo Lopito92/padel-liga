@@ -361,8 +361,176 @@ const FC={apiKey:"AIzaSyBTVg3VDNsF6WPsdNztfn66b1iI77-HQgo",authDomain:"liga-bdnc
 const ADMIN_EMAIL="mflopo92@gmail.com";
 const app=initializeApp(FC),auth=getAuth(app),db=getFirestore(app);
 
-// PWA manifest
+// PWA manifest loaded from manifest.json
 
+// Theme
+const th=localStorage.getItem("theme")||"dark";
+if(th==="light"){document.body.classList.add("light");document.getElementById("themeIcon").className="fas fa-sun";document.getElementById("themeColorMeta").content="#F0F2F5";}
+
+// State
+let CU=null,CR="viewer",CUD=null,GH=[],PS={},PAIRS={},H2H={},PH2H={},PLY=[],SH=[],CFG={name:"Liga BDNC",emoji:"",seasonName:"",poteDerrota:5,poteEmpate:2.5};
+let selP=[],tDrawn=false,setCount=0,cT1=[],cT2=[],mT1=[],mT2=[],confCB=null,unsubs=[],editId=null,AVT={},DSP=[];
+let selSeason="current";
+
+// Auth
+onAuthStateChanged(auth,async u=>{
+  if(u){
+    CU=u;
+    const ref=doc(db,"users",u.uid);
+    let snap=await getDoc(ref);
+    if(!snap.exists()){
+      // New user: create as pending
+      const r=u.email===ADMIN_EMAIL?"admin":"pendente";
+      await setDoc(ref,{email:u.email,name:u.displayName||u.email,role:r,playerName:null,createdAt:serverTimestamp()});
+      snap=await getDoc(ref);
+    } else if(u.email===ADMIN_EMAIL&&snap.data().role!=="admin"){
+      await updateDoc(ref,{role:"admin"});snap=await getDoc(ref);
+    }
+    CUD=snap.data();
+    CR=CUD.role||"pendente";
+    if(CR==="pendente"){showPending();}else{showApp();}
+  }else{CU=null;CR="viewer";CUD=null;showLogin();}
+});
+
+function showLogin(){
+  document.getElementById("loadingScreen").style.display="none";
+  document.getElementById("loginScreen").classList.add("visible");
+  document.getElementById("appScreen").classList.remove("visible");
+  document.getElementById("pendingScreen").style.display="none";
+  unsubs.forEach(u=>u());unsubs=[];
+}
+function showPending(){
+  document.getElementById("loadingScreen").style.display="none";
+  document.getElementById("loginScreen").classList.remove("visible");
+  document.getElementById("appScreen").classList.remove("visible");
+  document.getElementById("pendingScreen").style.display="flex";
+}
+function showApp(){
+  document.getElementById("loadingScreen").style.display="none";
+  document.getElementById("loginScreen").classList.remove("visible");
+  document.getElementById("pendingScreen").style.display="none";
+  document.getElementById("appScreen").classList.add("visible");
+  applyRole();subscribeData();initSets();
+  const t=new Date().toISOString().split("T")[0];
+  document.getElementById("gameDate").value=t;document.getElementById("gameDate").max=t;
+  updateHeaderAvatar();
+  if("Notification"in window&&Notification.permission==="default")Notification.requestPermission();
+}
+function applyRole(){
+  const b=document.getElementById("roleBadge");
+  b.textContent={admin:"Admin",jogador:"Jogador",viewer:"Viewer",pendente:"Pendente"}[CR]||"Viewer";
+  b.className="role-badge role-"+(CR==="pendente"?"viewer":CR);
+  document.querySelectorAll(".admin-only").forEach(e=>e.style.display=CR==="admin"?"":"none");
+  const canPlay=CR==="admin"||CR==="jogador";
+  document.getElementById("fabBtn").classList.toggle("hidden",!canPlay);
+  document.getElementById("headerNewGameBtn").style.display=canPlay?"":"none";
+}
+
+// Subscribe
+function subscribeData(){
+  unsubs.forEach(u=>u());unsubs=[];
+  unsubs.push(onSnapshot(doc(db,"data","config"),s=>{
+    if(s.exists()){CFG={...CFG,...s.data()};const _ls=document.getElementById("leagueTitleSpan");if(_ls)_ls.textContent=CFG.name||"Liga BDNC";
+      document.title=CFG.name||"Liga BDNC";
+    if(CR==="admin"){
+      const el1=document.getElementById("cfgLeagueName"),el2=document.getElementById("cfgSeasonName"),el3=document.getElementById("cfgPoteValue"),el4=document.getElementById("cfgPoteDraw");
+      if(el1)el1.value=CFG.name||"";if(el2)el2.value=CFG.seasonName||"";if(el3)el3.value=CFG.poteDerrota??5;if(el4)el4.value=CFG.poteEmpate??2.5;}}
+  }));
+  unsubs.push(onSnapshot(doc(db,"data","players"),s=>{PLY=s.exists()?(s.data().list||[]):[];updatePlayerGrid();updatePlayersAdminList();updateDashboard();loadAvatars();}));
+  unsubs.push(onSnapshot(doc(db,"data","games"),s=>{GH=s.exists()?(s.data().list||[]):[];GH.sort((a,b)=>new Date(b.date)-new Date(a.date));applySeasonFilter();}));
+  unsubs.push(onSnapshot(doc(db,"data","seasons"),s=>{SH=s.exists()?(s.data().list||[]):[];updateSeasonHistory();updateSeasonFilterUI();}));
+  if(CR==="admin")loadUsers();
+}
+
+// Season filter
+function updateSeasonFilterUI(){
+  const sel=document.getElementById("seasonFilter");
+  sel.innerHTML=`<option value="current">${CFG.seasonName?CFG.seasonName+" (atual)":"Temporada Atual"}</option>`;
+  SH.forEach((s,i)=>sel.innerHTML+=`<option value="${i}">${s.name} (${s.date})</option>`);
+  sel.value=selSeason;
+}
+document.getElementById("seasonFilter").addEventListener("change",function(){selSeason=this.value;applySeasonFilter();});
+function applySeasonFilter(){
+  if(selSeason==="current"){DSP=GH;}
+  else{const s=SH[parseInt(selSeason)];DSP=s?(s.games||[]):[];}
+  rebuildStats(DSP);renderAll();
+}
+function rebuildStats(games){
+  PS={};PAIRS={};H2H={};PH2H={};
+  [...(games||[])].sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(g=>{
+    const[t1s,t2s]=g.result.split("-").map(Number);
+    calcPS(g.team1,g.team2,t1s,t2s,g.setScores);calcPairs(g.team1,g.team2,t1s,t2s,g.setScores);
+    calcH2H(g.team1,g.team2,t1s,t2s);calcPH2H(g.team1,g.team2,t1s,t2s);
+  });
+}
+function renderAll(){updateGameHistoryDisplay();updateRanking();updatePairsRanking();updateH2HTable();updatePH2HTable();updateDashboard();}
+
+// Avatars — each player stored in separate doc to avoid 1MB limit
+async function loadAvatars(){
+  try{
+    AVT={};
+    // Load all players + current user's player (in case playerName differs from PLY entry)
+    const keys=[...PLY];
+    if(CUD?.playerName&&!keys.includes(CUD.playerName))keys.push(CUD.playerName);
+    await Promise.all(keys.map(async p=>{
+      try{const s=await getDoc(doc(db,"avatars",p));if(s.exists()&&s.data().url)AVT[p]=s.data().url;}catch(e){}
+    }));
+    // Also check user doc photoURL as fallback
+    if(CUD?.playerName&&!AVT[CUD.playerName]&&CUD?.photoURL){
+      AVT[CUD.playerName]=CUD.photoURL;
+    }
+    updateHeaderAvatar();
+    updatePlayersAdminList();
+    renderAll();
+  }catch(e){console.error("loadAvatars",e);}
+}
+function avatarHtml(name,sz=24){
+  const url=AVT[name];
+  if(url)return`<img src="${url}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);vertical-align:middle;flex-shrink:0" onerror="this.style.display='none'">`;
+  const ini=(name||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  return`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:var(--surface3);border:2px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:${Math.floor(sz*.38)}px;font-weight:700;color:var(--muted);vertical-align:middle;flex-shrink:0">${ini}</span>`;
+}
+function updateHeaderAvatar(){
+  const el=document.getElementById("headerAvatar");if(!CU){el.innerHTML="";return;}
+  const nm=CU.displayName||CUD?.name||CU.email;
+  const myPlayer=CUD?CUD.playerName:null;
+  const avatarKey=myPlayer||nm;
+  // Prefer Firestore avatar (AVT) over Auth photoURL to avoid stale base64 in Auth
+  const url=AVT[avatarKey]||CUD?.photoURL;
+  el.innerHTML=url?`<img src="${url}" class="header-avatar" id="hAv" onerror="this.style.display='none'">`:`<span id="hAv" style="width:32px;height:32px;border-radius:50%;background:var(--surface3);border:2px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer">${(nm||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</span>`;
+  document.getElementById("hAv").onclick=openProfileModal;
+}
+
+// Profile
+function openProfileModal(){
+  const myPlayer=CUD?CUD.playerName:null;
+  const displayName=CU.displayName||CUD?.name||"";
+  // Avatar: use player avatar if has player, else photoURL
+  const avatarKey=myPlayer||displayName;
+  const url=AVT[avatarKey]||CUD?.photoURL;
+  // Name field — editable by everyone (display name, not player name)
+  const pnEl=document.getElementById("profileName");
+  pnEl.value=displayName;pnEl.readOnly=false;pnEl.style.opacity="1";
+  // Label shows player name as info (read-only display)
+  const lbl=document.getElementById("profileName").previousElementSibling;
+  lbl.innerHTML=myPlayer?`Nome / Jogador <span style="font-size:10px;color:var(--muted)">(alterar aqui muda o nome na liga)</span>`:"Nome de exibicao";
+  document.getElementById("avatarPreviewWrap").innerHTML=url
+    ?`<img src="${url}" class="avatar-preview">`
+    :`<div style="width:90px;height:90px;border-radius:50%;background:var(--surface3);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--muted)">${(displayName||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}</div>`;
+  // Show avatar upload only if has player
+  document.querySelector(".avatar-upload label").style.display=myPlayer?"":"none";
+  // Remove old message first to avoid duplicates
+  const oldMsg=document.getElementById("noPlayerMsg");if(oldMsg)oldMsg.remove();
+  if(!myPlayer){document.getElementById("avatarPreviewWrap").insertAdjacentHTML("afterend","<p id='noPlayerMsg' style='font-size:12px;color:var(--muted);text-align:center;margin-top:8px'>Sem jogador associado. Pede ao admin para te associar.</p>");}
+  openModal("profileModal");
+}
+// Compress image to max 200KB before storing
+function compressImage(file,maxKB=200){
+  return new Promise(res=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
       const canvas=document.createElement("canvas");
       let w=img.width,h=img.height;
       // Scale down if too large
