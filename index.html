@@ -361,6 +361,12 @@ const FC={apiKey:"AIzaSyBTVg3VDNsF6WPsdNztfn66b1iI77-HQgo",authDomain:"liga-bdnc
 const ADMIN_EMAIL="mflopo92@gmail.com";
 const app=initializeApp(FC),auth=getAuth(app),db=getFirestore(app);
 
+function compressImage(file,maxKB=200){
+  return new Promise(res=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
       const canvas=document.createElement("canvas");
       let w=img.width,h=img.height;
       // Scale down if too large
