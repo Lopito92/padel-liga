@@ -149,7 +149,7 @@
   </style>
 </head>
 <body>
-<div id="loadingScreen"><div class="logo"><img src="logo.png" style="height:60px;width:auto;margin-bottom:8px"><br>LIGA BDNC</div><div class="spinner"></div></div>
+<div id="loadingScreen"><div class="logo" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px"><img src="logo.png" style="height:80px;width:auto;display:block;margin:0 auto">LIGA BDNC</div><div class="spinner"></div></div>
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-title">BDNC</div>
@@ -362,7 +362,7 @@ const ADMIN_EMAIL="mflopo92@gmail.com";
 const app=initializeApp(FC),auth=getAuth(app),db=getFirestore(app);
 
 // PWA manifest
-const mf={name:"Liga BDNC",short_name:"BDNC",start_url:location.pathname,display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"logo.png",sizes:"512x512",type:"image/png"},{src:"logo.png",sizes:"192x192",type:"image/png"}]};
+const mf={name:"Liga BDNC",short_name:"BDNC",start_url:"./",display:"standalone",background_color:"#0E0E0E",theme_color:"#C9A84C",icons:[{src:"logo.png",sizes:"512x512",type:"image/png"},{src:"logo.png",sizes:"192x192",type:"image/png"}]};
 document.getElementById("pwaManifest").href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:"application/json"}));
 
 // Theme
