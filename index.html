@@ -1325,7 +1325,41 @@ document.getElementById("btnConfirmImport").addEventListener("click",async()=>{
     if('serviceWorker' in navigator){
       navigator.serviceWorker.register('./sw.js').catch(()=>{});
     }
-  </script>
+  
+window.__victoryShareText="";
+window.__shareVictory=()=>{
+  const txt=window.__victoryShareText;
+  if(navigator.share)navigator.share({title:"Liga BDNC",text:txt}).catch(()=>{});
+  else navigator.clipboard.writeText(txt).then(()=>toast("Copiado!"));
+};
+
+function showVictoryModal(t1,t2,t1S,t2S,sc,date){
+  const draw=t1S===t2S;
+  const winners=t1S>t2S?t1:t2;
+  const losers=t1S>t2S?t2:t1;
+  const sets=sc.map(s=>s.a+"-"+s.b).join(", ");
+  window.__victoryShareText="🎾 Liga BDNC
+"+t1.join(" & ")+" vs "+t2.join(" & ")+"
+"+t1S+"-"+t2S+" ("+sets+")
+"+(draw?"Empate!":"Vencedor: "+winners.join(" & "))+"
+Data: "+date;
+  const el=document.getElementById("victoryContent");
+  if(!el)return;
+  el.innerHTML=
+    '<div style="font-size:56px;margin-bottom:8px">'+(draw?"🤝":"🏆")+'</div>'+
+    '<h2 style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">'+(draw?"EMPATE!":"PARABÉNS!")+'</h2>'+
+    (!draw?'<p style="font-size:20px;font-weight:700;margin-bottom:4px">'+winners.join(" & ")+'</p>'+
+    '<p style="color:var(--muted);font-size:13px;margin-bottom:16px">vencem contra '+losers.join(" & ")+'</p>':
+    '<p style="color:var(--muted);font-size:14px;margin-bottom:16px">'+t1.join(" & ")+" vs "+t2.join(" & ")+'</p>')+
+    '<div style="background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:20px;font-size:18px;font-weight:700">'+
+    t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span></div>'+
+    '<div style="display:flex;gap:10px">'+
+    '<button class="btn btn-primary" onclick="window.__shareVictory()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>'+
+    '<button class="btn btn-ghost" onclick="closeModal('victoryModal')" style="flex:1;justify-content:center">Fechar</button>'+
+    '</div>';
+  openModal("victoryModal");
+}
+</script>
 
   <div id="iosInstallBanner">
     <img src="logo.png" onerror="this.style.display='none'">
