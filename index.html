@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="theme-color" content="#C9A84C" id="themeColorMeta">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Liga BDNC">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Liga BDNC">
   <link rel="icon" href="logo.png" type="image/png">
@@ -146,6 +148,14 @@
     ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
     .hide-mobile{display:none}
     @media(min-width:700px){.hide-mobile{display:table-cell}}
+  </style>
+
+  <style>
+    #iosInstallBanner{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:14px 16px;z-index:9998;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,0.4)}
+    #iosInstallBanner img{width:40px;height:40px;border-radius:10px}
+    #iosInstallBanner .ios-text{flex:1;font-size:13px;line-height:1.4}
+    #iosInstallBanner .ios-text strong{display:block;font-size:14px;margin-bottom:2px}
+    #iosInstallBanner .ios-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
   </style>
 </head>
 <body>
@@ -299,7 +309,14 @@
 </div>
 
 <!-- MODAL JOGO -->
-<div class="modal-overlay" id="newGameModal">
+
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal" style="max-width:420px;text-align:center">
+      <div class="modal-handle"></div>
+      <div id="victoryContent"></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="newGameModal">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title" id="gameModalTitle">Novo Jogo</span><button class="modal-close" id="btnCloseGameModal">&times;</button></div>
@@ -1053,7 +1070,9 @@ async function handleGameSubmission(){
   }else{
     await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date,team1:t1,team2:t2,result,setScores:sc},...GH]});
     if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo! ",{body:`${t1.join(" & ")} vs ${t2.join(" & ")} - ${result}`});
-    toast("Jogo registado!");
+    resetGameForm();closeModal("newGameModal");
+    showVictoryModal(t1,t2,t1S,t2S,sc,date);
+    return;
   }
   resetGameForm();closeModal("newGameModal");
 }
@@ -1296,9 +1315,25 @@ document.getElementById("btnConfirmImport").addEventListener("click",async()=>{
 });
 </script>
   <script>
+    
+    // iOS install prompt
+    const isIos=()=>/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+    const isInStandaloneMode=()=>('standalone' in navigator)&&navigator.standalone;
+    if(isIos()&&!isInStandaloneMode()&&!localStorage.getItem('iosBannerDismissed')){
+      setTimeout(()=>document.getElementById('iosInstallBanner').style.display='flex',3000);
+    }
     if('serviceWorker' in navigator){
       navigator.serviceWorker.register('./sw.js').catch(()=>{});
     }
   </script>
+
+  <div id="iosInstallBanner">
+    <img src="logo.png" onerror="this.style.display='none'">
+    <div class="ios-text">
+      <strong>Instalar Liga BDNC</strong>
+      Toca em <span style="color:var(--gold)">Partilhar</span> <span style="font-size:16px">⬆</span> e depois <span style="color:var(--gold)">"Adicionar ao Ecrã Principal"</span>
+    </div>
+    <button class="ios-close" onclick="document.getElementById('iosInstallBanner').style.display='none';localStorage.setItem('iosBannerDismissed','1')">&times;</button>
+  </div>
 </body>
 </html>
