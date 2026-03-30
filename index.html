@@ -1050,9 +1050,9 @@ async function handleGameSubmission(){
   if(!tDrawn){toast("Define as equipas primeiro.","warning");return;}
   const containers=document.querySelectorAll(".set-container");
   let t1S=0,t2S=0,sc=[],ok=true;
-  containers.forEach((c,i)=>{
+  containers.forEach((con,i)=>{
     if(!ok)return;
-    const s1=parseInt(c.querySelectorAll("select")[0].value),s2=parseInt(c.querySelectorAll("select")[1].value);
+    const s1=parseInt(con.querySelectorAll("select")[0].value),s2=parseInt(con.querySelectorAll("select")[1].value);
     if(isNaN(s1)||isNaN(s2)){toast(`Preenche o Set ${i+1}.`,"error");ok=false;return;}
     if(!validSet(s1,s2)){toast(`Set ${i+1}: invalido (${s1}-${s2}). Validos: 6-0 a 6-4, 7-5 ou 7-6.`,"error");ok=false;return;}
     if(s1>s2)t1S++;else t2S++;sc.push({a:s1,b:s2});
@@ -1063,18 +1063,24 @@ async function handleGameSubmission(){
   let t1=[...cT1],t2=[...cT2];
   const en=document.getElementById("estrangeiroName").value.trim();
   if(selP.includes("convidado")&&en){const rep=a=>a.map(p=>p==="convidado"?`convidado (${en})`:p);t1=rep(t1);t2=rep(t2);}
-  const result=`${t1S}-${t2S}`;
-  if(editId){
+  const result=t1S+"-"+t2S;
+  const isEdit=!!editId;
+  if(isEdit){
     await setDoc(doc(db,"data","games"),{list:GH.map(g=>g.id===editId?{...g,date,team1:t1,team2:t2,result,setScores:sc}:g)});
+    resetGameForm();
+    closeModal("newGameModal");
     toast("Jogo atualizado!");
-  }else{
-    await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date,team1:t1,team2:t2,result,setScores:sc},...GH]});
-    if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo! ",{body:`${t1.join(" & ")} vs ${t2.join(" & ")} - ${result}`});
-    resetGameForm();closeModal("newGameModal");
-    showVictoryModal(t1,t2,t1S,t2S,sc,date);
-    return;
+  } else {
+    const newGame={id:Date.now(),date,team1:t1,team2:t2,result,setScores:sc};
+    await setDoc(doc(db,"data","games"),{list:[newGame,...GH]});
+    if("Notification"in window&&Notification.permission==="granted"){
+      new Notification("Novo Jogo!",{body:t1.join(" & ")+" vs "+t2.join(" & ")+" - "+result});
+    }
+    resetGameForm();
+    closeModal("newGameModal");
+    // Small delay to ensure modal is fully closed before opening victory modal
+    setTimeout(()=>showVictoryModal(t1,t2,t1S,t2S,sc,date), 300);
   }
-  resetGameForm();closeModal("newGameModal");
 }
 
 function resetGameForm(){
@@ -1313,19 +1319,7 @@ document.getElementById("btnConfirmImport").addEventListener("click",async()=>{
     }
   );
 });
-</script>
-  <script>
-    
-    // iOS install prompt
-    const isIos=()=>/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-    const isInStandaloneMode=()=>('standalone' in navigator)&&navigator.standalone;
-    if(isIos()&&!isInStandaloneMode()&&!localStorage.getItem('iosBannerDismissed')){
-      setTimeout(()=>document.getElementById('iosInstallBanner').style.display='flex',3000);
-    }
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('./sw.js').catch(()=>{});
-    }
-  
+
 window.__victoryShareText="";
 window.__shareVictory=()=>{
   const txt=window.__victoryShareText;
@@ -1359,6 +1353,19 @@ Data: "+date;
     '</div>';
   openModal("victoryModal");
 }
+</script>
+  <script>
+    
+    // iOS install prompt
+    const isIos=()=>/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+    const isInStandaloneMode=()=>('standalone' in navigator)&&navigator.standalone;
+    if(isIos()&&!isInStandaloneMode()&&!localStorage.getItem('iosBannerDismissed')){
+      setTimeout(()=>document.getElementById('iosInstallBanner').style.display='flex',3000);
+    }
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
+  
 </script>
 
   <div id="iosInstallBanner">
