@@ -690,6 +690,8 @@ document.querySelectorAll(".tab-btn,.bottom-nav-btn").forEach(b=>b.addEventListe
 // Modals
 function openModal(id){document.getElementById(id).classList.add("open");}
 function closeModal(id){document.getElementById(id).classList.remove("open");}
+window.closeModal=closeModal;
+window.__closeVictory=function(){closeModal("newGameModal");};
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 
 // Theme
@@ -1355,8 +1357,11 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
     '<div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:22px;font-weight:700">'+t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span></div>'+
     '<div style="display:flex;gap:10px">'+
     '<button class="btn btn-primary" onclick="window.__shareV()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>'+
-    '<button class="btn btn-ghost" onclick="closeModal(&apos;newGameModal&apos;)" style="flex:1;justify-content:center">Fechar</button>'+
+    '<button class="btn btn-ghost" onclick="window.__closeVictory()" style="flex:1;justify-content:center">Fechar</button>'+
     '</div></div>';
+  // Ensure modal is open (mobile fix)
+  const modal=document.getElementById("newGameModal");
+  if(modal&&!modal.classList.contains("open"))modal.classList.add("open");
   if(!draw)launchConfetti();
 }
 </script>
