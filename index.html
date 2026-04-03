@@ -1052,9 +1052,9 @@ async function handleGameSubmission(){
   if(!tDrawn){toast("Define as equipas primeiro.","warning");return;}
   const containers=document.querySelectorAll(".set-container");
   let t1S=0,t2S=0,sc=[],ok=true;
-  containers.forEach((c,i)=>{
+  containers.forEach((con,i)=>{
     if(!ok)return;
-    const s1=parseInt(c.querySelectorAll("select")[0].value),s2=parseInt(c.querySelectorAll("select")[1].value);
+    const s1=parseInt(con.querySelectorAll("select")[0].value),s2=parseInt(con.querySelectorAll("select")[1].value);
     if(isNaN(s1)||isNaN(s2)){toast(`Preenche o Set ${i+1}.`,"error");ok=false;return;}
     if(!validSet(s1,s2)){toast(`Set ${i+1}: invalido (${s1}-${s2}). Validos: 6-0 a 6-4, 7-5 ou 7-6.`,"error");ok=false;return;}
     if(s1>s2)t1S++;else t2S++;sc.push({a:s1,b:s2});
@@ -1068,16 +1068,25 @@ async function handleGameSubmission(){
   const result=`${t1S}-${t2S}`;
   if(editId){
     await setDoc(doc(db,"data","games"),{list:GH.map(g=>g.id===editId?{...g,date,team1:t1,team2:t2,result,setScores:sc}:g)});
-    toast("Jogo atualizado!");
-  }else{
-    await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date,team1:t1,team2:t2,result,setScores:sc},...GH]});
-    if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo! ",{body:`${t1.join(" & ")} vs ${t2.join(" & ")} - ${result}`});
     resetGameForm();
-    closeModal("newGameModal");
-    setTimeout(()=>showVictoryModal(t1,t2,t1S,t2S,sc,date),350);
-    return;
+    // Force close modal directly
+    const m=document.getElementById("newGameModal");
+    if(m)m.classList.remove("open");
+    toast("Jogo atualizado!");
+  } else {
+    // Capture values before async
+    const gt1=[...t1],gt2=[...t2],gt1S=t1S,gt2S=t2S,gsc=[...sc],gdate=date;
+    await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date:gdate,team1:gt1,team2:gt2,result,setScores:gsc},...GH]});
+    if("Notification"in window&&Notification.permission==="granted"){
+      new Notification("Novo Jogo!",{body:gt1.join(" & ")+" vs "+gt2.join(" & ")+" - "+result});
+    }
+    resetGameForm();
+    // Force close modal directly - do NOT use closeModal() to avoid any issues
+    const modal=document.getElementById("newGameModal");
+    if(modal){modal.classList.remove("open");}
+    // Show victory popup after short delay
+    setTimeout(()=>{try{showVictoryModal(gt1,gt2,gt1S,gt2S,gsc,gdate);}catch(e){console.error("Victory modal error:",e);}}, 400);
   }
-  resetGameForm();closeModal("newGameModal");
 }
 
 function resetGameForm(){
@@ -1106,6 +1115,7 @@ document.getElementById("btnNewSeason").onclick=()=>{if(CR!=="admin")return;show
 document.getElementById("fabBtn").onclick=openNewGame;
 document.getElementById("headerNewGameBtn").onclick=openNewGame;
 document.getElementById("btnCloseGameModal").onclick=()=>closeModal("newGameModal");
+document.getElementById("victoryModal").addEventListener("click",e=>{if(e.target===document.getElementById("victoryModal"))closeModal("victoryModal");});
 document.getElementById("btnSortear").onclick=sortear;
 document.getElementById("btnManual").onclick=toggleManual;
 document.getElementById("btnAddSet").onclick=addSet;
