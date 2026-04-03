@@ -41,7 +41,7 @@
     @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
     @keyframes fadeOut{to{opacity:0;transform:translateX(20px)}}
     .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center;padding:20px}
-    .confirm-overlay.open{display:flex}
+    /* confirm open handled by style */
     .confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:100%;text-align:center}
     .confirm-box h3{margin-bottom:10px;color:var(--text)}.confirm-box p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5}
     .confirm-actions{display:flex;gap:10px;justify-content:center}
@@ -98,7 +98,7 @@
     .pote-value{color:var(--money);font-weight:700}.v-rate{color:var(--gold);font-weight:700}
     .winner-icon{color:var(--gold);margin-right:4px}.top3-row{background:rgba(201,168,76,.04)}
     .section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:flex-end;justify-content:center}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:flex-end;justify-content:center;-webkit-overflow-scrolling:touch}
     .modal-overlay.open{display:flex}
     @media(min-width:700px){.modal-overlay{align-items:center}.modal{border-radius:16px!important;max-height:90vh!important}}
     .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 -10px 40px var(--shadow)}
@@ -187,7 +187,7 @@
 </div>
 
 <div id="toast-container"></div>
-<div class="confirm-overlay" id="confirmOverlay">
+<div class="confirm-overlay" id="confirmOverlay" style="display:none">
   <div class="confirm-box">
     <h3 id="confirmTitle">Confirmar</h3><p id="confirmMsg"></p>
     <div class="confirm-actions">
@@ -310,13 +310,13 @@
 
 <!-- MODAL JOGO -->
 
-  <div class="modal-overlay" id="victoryModal">
+  <div class="modal-overlay" id="victoryModal" style="display:none">
     <div class="modal" style="max-width:420px;text-align:center">
       <div class="modal-handle"></div>
       <div id="victoryContent"></div>
     </div>
   </div>
-  <div class="modal-overlay" id="newGameModal">
+  <div class="modal-overlay" id="newGameModal" style="display:none">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title" id="gameModalTitle">Novo Jogo</span><button class="modal-close" id="btnCloseGameModal">&times;</button></div>
@@ -347,7 +347,7 @@
 </div>
 
 <!-- MODAL PERFIL -->
-<div class="modal-overlay" id="profileModal">
+<div class="modal-overlay" id="profileModal" style="display:none">
   <div class="modal" style="max-width:400px">
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title">Perfil</span><button class="modal-close" id="btnCloseProfileModal">&times;</button></div>
@@ -361,7 +361,7 @@
 </div>
 
 <!-- MODAL STATS JOGADOR -->
-<div class="modal-overlay" id="playerStatsModal">
+<div class="modal-overlay" id="playerStatsModal" style="display:none">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title" id="playerStatsTitle">Jogador</span><button class="modal-close" id="btnClosePlayerStats">&times;</button></div>
@@ -688,8 +688,18 @@ function switchTab(tabId){
 document.querySelectorAll(".tab-btn,.bottom-nav-btn").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
 
 // Modals
-function openModal(id){document.getElementById(id).classList.add("open");}
-function closeModal(id){document.getElementById(id).classList.remove("open");}
+function openModal(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add("open");
+  el.style.display="flex";
+}
+function closeModal(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.remove("open");
+  el.style.display="none";
+}
 window.openModal=openModal;
 window.closeModal=closeModal;
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
@@ -713,10 +723,10 @@ function toast(msg,type="success"){
 // Confirm
 function showConfirm(title,msg,cb){
   document.getElementById("confirmTitle").textContent=title;document.getElementById("confirmMsg").textContent=msg;
-  confCB=cb;document.getElementById("confirmOverlay").classList.add("open");
+  confCB=cb;openModal("confirmOverlay");
 }
-document.getElementById("btnConfirmCancel").onclick=()=>{document.getElementById("confirmOverlay").classList.remove("open");confCB=null;};
-document.getElementById("btnConfirmOk").onclick=()=>{if(confCB)confCB();document.getElementById("confirmOverlay").classList.remove("open");confCB=null;};
+document.getElementById("btnConfirmCancel").onclick=()=>{closeModal("confirmOverlay");confCB=null;};
+document.getElementById("btnConfirmOk").onclick=()=>{if(confCB)confCB();closeModal("confirmOverlay");confCB=null;};
 
 // Auth
 document.getElementById("btnLogin").onclick=async()=>{
@@ -1050,7 +1060,7 @@ function shareGame(id){
 async function handleGameSubmission(){
   if(CR==="viewer"){toast("Sem permissao.","error");return;}
   if(!tDrawn){toast("Define as equipas primeiro.","warning");return;}
-  const containers=document.querySelectorAll(".set-container");
+  const gameModal=document.getElementById("newGameModal");const containers=(gameModal||document).querySelectorAll(".set-container");
   let t1S=0,t2S=0,sc=[],ok=true;
   containers.forEach((con,i)=>{
     if(!ok)return;
@@ -1083,9 +1093,12 @@ async function handleGameSubmission(){
     resetGameForm();
     // Force close modal directly - do NOT use closeModal() to avoid any issues
     const modal=document.getElementById("newGameModal");
-    if(modal){modal.classList.remove("open");}
-    // Show victory popup after short delay
-    setTimeout(()=>{try{showVictoryModal(gt1,gt2,gt1S,gt2S,gsc,gdate);}catch(e){console.error("Victory modal error:",e);}}, 400);
+    closeModal("newGameModal");
+    // Show victory popup after delay
+    setTimeout(()=>{
+      try{showVictoryModal(gt1,gt2,gt1S,gt2S,gsc,gdate);}
+      catch(e){console.error("Victory:",e);toast("Jogo registado!");}
+    }, 500);
   }
 }
 
