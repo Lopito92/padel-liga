@@ -309,12 +309,6 @@
 </div>
 
 <!-- MODAL JOGO -->
-
-  <div class="modal-overlay" id="victoryModal" style="display:none">
-    <div class="modal" style="max-width:420px;text-align:center">
-      <div class="modal-handle"></div>
-      <div id="victoryContent"></div>
-    </div>
   </div>
   <div class="modal-overlay" id="newGameModal" style="display:none">
   <div class="modal">
@@ -1340,68 +1334,70 @@ document.getElementById("btnConfirmImport").addEventListener("click",async()=>{
   );
 });
 
-// ── Victory Modal + Confetti ──
+// ── Victory Modal ──
 function launchConfetti(){
-  const canvas=document.createElement("canvas");
-  canvas.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999";
-  document.body.appendChild(canvas);
-  const ctx=canvas.getContext("2d");
-  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
-  const pieces=Array.from({length:120},()=>({
-    x:Math.random()*canvas.width,y:-20,
-    r:Math.random()*6+3,
-    color:["#C9A84C","#27AE60","#E8C97A","#fff","#C0392B"][Math.floor(Math.random()*5)],
-    vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,
-    va:(Math.random()-0.5)*0.2,angle:Math.random()*Math.PI*2
+  const cv=document.createElement("canvas");
+  cv.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  document.body.appendChild(cv);
+  const ctx=cv.getContext("2d");
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const p=Array.from({length:100},()=>({
+    x:Math.random()*cv.width,y:-20,r:Math.random()*6+3,
+    c:["#C9A84C","#27AE60","#E8C97A","#fff","#C0392B"][Math.floor(Math.random()*5)],
+    vx:(Math.random()-.5)*4,vy:Math.random()*3+2,va:(Math.random()-.5)*.2,a:Math.random()*Math.PI*2
   }));
-  let frame=0;
+  let f=0;
   function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.angle+=p.va;p.vy+=0.05;
-      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);
-      ctx.fillStyle=p.color;ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
-      ctx.restore();
-    });
-    frame++;
-    if(frame<180)requestAnimationFrame(draw);
-    else canvas.remove();
+    ctx.clearRect(0,0,cv.width,cv.height);
+    p.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;p.vy+=.05;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
+      ctx.fillStyle=p.c;ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);ctx.restore();});
+    if(++f<200)requestAnimationFrame(draw);else cv.remove();
   }
   draw();
 }
 
 window.__victoryShareText="";
 window.__shareVictory=function(){
-  var txt=window.__victoryShareText;
-  if(navigator.share)navigator.share({title:"Liga BDNC",text:txt}).catch(function(){});
-  else navigator.clipboard.writeText(txt).then(function(){toast("Copiado!");});
+  const txt=window.__victoryShareText;
+  if(navigator.share)navigator.share({title:"Liga BDNC",text:txt}).catch(()=>{});
+  else navigator.clipboard.writeText(txt).then(()=>toast("Copiado!"));
 };
 
-function showVictoryModal(t1,t2,t1S,t2S,sc,date){
-  var draw=t1S===t2S;
-  var winners=draw?null:(t1S>t2S?t1:t2);
-  var losers=draw?null:(t1S>t2S?t2:t1);
-  var sets=sc.map(function(s){return s.a+"-"+s.b;}).join(", ");
-  var shareLines=[
-    "Liga BDNC",
+function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
+  const draw=t1S===t2S;
+  const winners=t1S>t2S?t1:t2;
+  const losers=t1S>t2S?t2:t1;
+  const sets=sc.map(s=>s.a+"-"+s.b).join(", ");
+  window.__victoryShareText=["Liga BDNC",
     t1.join(" & ")+" vs "+t2.join(" & "),
     t1S+"-"+t2S+" ("+sets+")",
     draw?"Empate!":"Vencedor: "+winners.join(" & "),
-    "Data: "+date
-  ];
-  window.__victoryShareText=shareLines.join("\n");
-  var el=document.getElementById("victoryContent");
-  if(!el)return;
-  var html="";
-  html+='<div style="font-size:60px;margin-bottom:10px">'+(draw?"🤝":"🏆")+'</div>';
-  html+='<h2 style="font-family:\'Bebas Neue\',sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px;margin-bottom:10px">'+(draw?"EMPATE!":"PARABÉNS!")+'</h2>';
-  if(!draw){
-    html+='<p style="font-size:19px;font-weight:700;margin-bottom:4px">'+winners.join(" & ")+'</p>';
-    html+='<p style="color:var(--muted);font-size:13px;margin-bottom:16px">vencem '+losers.join(" & ")+'</p>';
-  } else {
-    html+='<p style="color:var(--muted);font-size:14px;margin-bottom:16px">'+t1.join(" & ")+" vs "+t2.join(" & ")+'</p>';
-  }
-  html+='<div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:22px;font-weight:700">';
+    "Data: "+date].join("\n");
+
+  // Replace the inner content of newGameModal with victory screen
+  const modal=document.getElementById("newGameModal");
+  const inner=modal.querySelector(".modal");
+  inner.innerHTML=
+    '<div class="modal-handle"></div>'+
+    '<div style="text-align:center;padding:16px 8px">'+
+    '<div style="font-size:64px;margin-bottom:12px">'+(draw?"🤝":"🏆")+'</div>'+
+    '<h2 style="font-family:Bebas Neue,sans-serif;font-size:34px;color:var(--gold);letter-spacing:2px;margin-bottom:10px">'+(draw?"EMPATE!":"PARABÉNS!")+'</h2>'+
+    (!draw?'<p style="font-size:20px;font-weight:700;margin-bottom:4px">'+winners.join(" & ")+'</p>'+
+    '<p style="color:var(--muted);font-size:13px;margin-bottom:16px">vencem contra '+losers.join(" & ")+'</p>':
+    '<p style="color:var(--muted);font-size:14px;margin-bottom:16px">'+t1.join(" & ")+" vs "+t2.join(" & ")+'</p>')+
+    '<div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:24px;font-weight:700">'+
+    t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span></div>'+
+    '<div style="display:flex;gap:10px">'+
+    '<button class="btn btn-primary" onclick="window.__shareVictory()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>'+
+    '<button class="btn btn-ghost" onclick="closeModal('newGameModal');" style="flex:1;justify-content:center">Fechar</button>'+
+    '</div></div>';
+
+  // Make sure modal is open (it should already be)
+  modal.classList.add("open");
+  modal.style.display="flex";
+  if(!draw)launchConfetti();
+}  html+='<div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:22px;font-weight:700">';
   html+=t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span></div>';
   html+='<div style="display:flex;gap:10px">';
   html+='<button class="btn btn-primary" onclick="window.__shareVictory()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>';
