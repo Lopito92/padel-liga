@@ -1355,7 +1355,7 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
     '<div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:22px;font-weight:700">'+t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span></div>'+
     '<div style="display:flex;gap:10px">'+
     '<button class="btn btn-primary" onclick="window.__shareV()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>'+
-    '<button class="btn btn-ghost" onclick="closeModal('newGameModal')" style="flex:1;justify-content:center">Fechar</button>'+
+    '<button class="btn btn-ghost" onclick="closeModal(&apos;newGameModal&apos;)" style="flex:1;justify-content:center">Fechar</button>'+
     '</div></div>';
   if(!draw)launchConfetti();
 }
@@ -1384,11 +1384,7 @@ function showVictoryModal(t1,t2,t1S,t2S,sc,date){
   const winners=t1S>t2S?t1:t2;
   const losers=t1S>t2S?t2:t1;
   const sets=sc.map(s=>s.a+"-"+s.b).join(", ");
-  window.__victoryShareText="🎾 Liga BDNC
-"+t1.join(" & ")+" vs "+t2.join(" & ")+"
-"+t1S+"-"+t2S+" ("+sets+")
-"+(draw?"Empate!":"Vencedor: "+winners.join(" & "))+"
-Data: "+date;
+  window.__victoryShareText="🎾 Liga BDNC\n"+t1.join(" & ")+" vs "+t2.join(" & ")+"\n"+t1S+"-"+t2S+" ("+sets+")\n"+(draw?"Empate!":"Vencedor: "+winners.join(" & "))+"\nData: "+date;
   const el=document.getElementById("victoryContent");
   if(!el)return;
   el.innerHTML=
