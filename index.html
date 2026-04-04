@@ -694,6 +694,11 @@ window.closeModal=closeModal;
 window.__closeVictory=function(){
   const m=document.getElementById('newGameModal');
   if(m){m.classList.remove('open');m.style.cssText="";}
+  // Restore original modal HTML so next openNewGame works
+  if(m&&_origModalHTML){
+    const inner=m.querySelector(".modal");
+    if(inner){inner.innerHTML=_origModalHTML;bindGameModalButtons();}
+  }
 };
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 
@@ -991,9 +996,20 @@ function renderManual(){
 window.__swap=(p,from)=>{if(from===1){const i=mT1.indexOf(p),sw=mT2[0];mT1[i]=sw;mT2[0]=p;}else{const i=mT2.indexOf(p),sw=mT1[0];mT2[i]=sw;mT1[0]=p;}renderManual();};
 
 // Open new game
+let _origModalHTML="";
 function openNewGame(){
   if(CR==="viewer"){toast("Sem permissao.","error");return;}
-  editId=null;document.getElementById("gameModalTitle").textContent="Novo Jogo";
+  editId=null;
+  const vmEl=document.getElementById("newGameModal");
+  const inner=vmEl?vmEl.querySelector(".modal"):null;
+  if(!inner)return;
+  // If modal was replaced by victory screen, restore original HTML
+  if(!document.getElementById("gameModalTitle")){
+    if(_origModalHTML)inner.innerHTML=_origModalHTML;
+    // Re-bind buttons
+    bindGameModalButtons();
+  }
+  document.getElementById("gameModalTitle").textContent="Novo Jogo";
   document.getElementById("playerSelectionSection").style.display="block";
   document.getElementById("btnSubmitGame").textContent="Registar Jogo";
   resetGameForm();openModal("newGameModal");
@@ -1114,11 +1130,21 @@ document.getElementById("btnNewSeason").onclick=()=>{if(CR!=="admin")return;show
 // Bind buttons
 document.getElementById("fabBtn").onclick=openNewGame;
 document.getElementById("headerNewGameBtn").onclick=openNewGame;
+// Save original modal HTML for restoration after victory screen
+(function(){const m=document.getElementById("newGameModal");if(m){const i=m.querySelector(".modal");if(i)_origModalHTML=i.innerHTML;}})();
 document.getElementById("btnCloseGameModal").onclick=()=>closeModal("newGameModal");
 document.getElementById("btnSortear").onclick=sortear;
 document.getElementById("btnManual").onclick=toggleManual;
 document.getElementById("btnAddSet").onclick=addSet;
 document.getElementById("btnSubmitGame").onclick=handleGameSubmission;
+function bindGameModalButtons(){
+  const g=id=>document.getElementById(id);
+  if(g("btnCloseGameModal"))g("btnCloseGameModal").onclick=()=>closeModal("newGameModal");
+  if(g("btnSortear"))g("btnSortear").onclick=sortear;
+  if(g("btnManual"))g("btnManual").onclick=toggleManual;
+  if(g("btnAddSet"))g("btnAddSet").onclick=addSet;
+  if(g("btnSubmitGame"))g("btnSubmitGame").onclick=handleGameSubmission;
+}
 document.getElementById("btnCloseProfileModal").onclick=()=>closeModal("profileModal");
 document.getElementById("btnClosePlayerStats").onclick=()=>closeModal("playerStatsModal");
 window.__editGame=id=>openEditGame(id);
