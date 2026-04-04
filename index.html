@@ -1076,9 +1076,10 @@ async function handleGameSubmission(){
     const _t1=[...t1],_t2=[...t2],_t1S=t1S,_t2S=t2S,_sc=[...sc],_date=date;
     await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date:_date,team1:_t1,team2:_t2,result,setScores:_sc},...GH]});
     if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo!",{body:_t1.join(" & ")+" vs "+_t2.join(" & ")+" - "+result});
-    resetGameForm();
-    // Use requestAnimationFrame to ensure DOM is ready before showing victory
-    requestAnimationFrame(()=>requestAnimationFrame(()=>showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date)));
+    // Show victory FIRST (before resetGameForm destroys the modal DOM)
+    showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date);
+    // Reset form after victory is shown
+    setTimeout(()=>resetGameForm(),100);
     return;
   }
   resetGameForm();closeModal("newGameModal");
@@ -1087,11 +1088,14 @@ async function handleGameSubmission(){
 
 function resetGameForm(){
   selP=[];tDrawn=false;cT1=[];cT2=[];editId=null;
-  document.getElementById("teamsDisplay").style.display="none";document.getElementById("manualTeams").style.display="none";
-  document.getElementById("estrangeiroWrap").style.display="none";document.getElementById("estrangeiroName").value="";
-  document.getElementById("playerSelectionSection").style.display="block";
+  const td=document.getElementById("teamsDisplay");if(td)td.style.display="none";
+  const mt=document.getElementById("manualTeams");if(mt)mt.style.display="none";
+  const ew=document.getElementById("estrangeiroWrap");if(ew)ew.style.display="none";
+  const en=document.getElementById("estrangeiroName");if(en)en.value="";
+  const ps=document.getElementById("playerSelectionSection");if(ps)ps.style.display="block";
   initSets();updatePlayerGrid();
-  const t=new Date().toISOString().split("T")[0];document.getElementById("gameDate").value=t;
+  const t=new Date().toISOString().split("T")[0];
+  const gd=document.getElementById("gameDate");if(gd)gd.value=t;
 }
 
 // Delete game
@@ -1350,8 +1354,9 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
   const sets=sc.map(function(s){return s.a+"-"+s.b;}).join(", ");
   window.__vstxt="Liga BDNC\n"+t1.join(" & ")+" vs "+t2.join(" & ")+"\n"+t1S+"-"+t2S+" ("+sets+")\n"+(draw?"Empate!":"Vencedor: "+win.join(" & "))+"\nData: "+date;
   const vmEl=document.getElementById("newGameModal");
-  const inner=vmEl?vmEl.querySelector(".modal"):null;
-  if(!inner){console.error("Victory modal inner not found");return;}
+  if(!vmEl){console.error("newGameModal not found");return;}
+  const inner=vmEl.querySelector(".modal");
+  if(!inner){console.error("modal inner not found");return;}
   inner.innerHTML=
     '<div class="modal-handle"></div>'+
     '<div style="text-align:center;padding:8px">'+
