@@ -691,7 +691,10 @@ document.querySelectorAll(".tab-btn,.bottom-nav-btn").forEach(b=>b.addEventListe
 function openModal(id){document.getElementById(id).classList.add("open");}
 function closeModal(id){document.getElementById(id).classList.remove("open");}
 window.closeModal=closeModal;
-window.__closeVictory=function(){closeModal("newGameModal");};
+window.__closeVictory=function(){
+  const m=document.getElementById('newGameModal');
+  if(m){m.classList.remove('open');m.style.cssText="";}
+};
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 
 // Theme
@@ -1056,7 +1059,7 @@ async function handleGameSubmission(){
     if(!ok)return;
     const s1=parseInt(c.querySelectorAll("select")[0].value),s2=parseInt(c.querySelectorAll("select")[1].value);
     if(isNaN(s1)||isNaN(s2)){toast(`Preenche o Set ${i+1}.`,"error");ok=false;return;}
-    if(!validSet(s1,s2)){toast(`Set ${i+1}: invalido (${s1}-${s2}). Validos: 6-0 a 6-4, 7-5 ou 7-6.`,"error");ok=false;return;}
+    if(!validSet(s1,s2)){toast(`Set ${i+1}: invalido ${s1}-${s2}. Use 6-0 a 6-4, 7-5 ou 7-6.`,"error");ok=false;return;}
     if(s1>s2)t1S++;else t2S++;sc.push({a:s1,b:s2});
   });
   if(!ok)return;
@@ -1074,7 +1077,8 @@ async function handleGameSubmission(){
     await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date:_date,team1:_t1,team2:_t2,result,setScores:_sc},...GH]});
     if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo!",{body:_t1.join(" & ")+" vs "+_t2.join(" & ")+" - "+result});
     resetGameForm();
-    showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date);
+    // Use requestAnimationFrame to ensure DOM is ready before showing victory
+    requestAnimationFrame(()=>requestAnimationFrame(()=>showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date)));
     return;
   }
   resetGameForm();closeModal("newGameModal");
@@ -1118,7 +1122,7 @@ window.__shareGame=id=>shareGame(id);
 window.__playerStats=n=>openPlayerStats(n);
 
 // Stats calc
-function validSet(a,b){const h=Math.max(a,b),l=Math.min(a,b);if(h===l)return false;if(h===6)return l<=4;if(h===7)return l===5||l===6;return false;}
+function validSet(a,b){const h=Math.max(a,b),l=Math.min(a,b);if(h===l)return false;if(h===6)return l>=0&&l<=4;if(h===7)return l===5||l===6;return false;}
 function vRate(s){const decisive=s.wins+s.losses;return decisive?(s.wins/decisive*100).toFixed(1):"0.0";}
 function rSort(a,b){const v=parseFloat(vRate(b[1]))-parseFloat(vRate(a[1]));if(v!==0)return v;const sd=(b[1].setsWon-b[1].setsLost)-(a[1].setsWon-a[1].setsLost);if(sd!==0)return sd;return(b[1].gamesWon-b[1].gamesLost)-(a[1].gamesWon-a[1].gamesLost);}
 function calcPS(t1,t2,s1,s2,sc){
@@ -1345,9 +1349,9 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
   const win=t1S>t2S?t1:t2,los=t1S>t2S?t2:t1;
   const sets=sc.map(function(s){return s.a+"-"+s.b;}).join(", ");
   window.__vstxt="Liga BDNC\n"+t1.join(" & ")+" vs "+t2.join(" & ")+"\n"+t1S+"-"+t2S+" ("+sets+")\n"+(draw?"Empate!":"Vencedor: "+win.join(" & "))+"\nData: "+date;
-  const modal=document.getElementById("newGameModal");
-  const inner=modal?modal.querySelector(".modal"):null;
-  if(!inner)return;
+  const vmEl=document.getElementById("newGameModal");
+  const inner=vmEl?vmEl.querySelector(".modal"):null;
+  if(!inner){console.error("Victory modal inner not found");return;}
   inner.innerHTML=
     '<div class="modal-handle"></div>'+
     '<div style="text-align:center;padding:8px">'+
@@ -1359,9 +1363,9 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
     '<button class="btn btn-primary" onclick="window.__shareV()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>'+
     '<button class="btn btn-ghost" onclick="window.__closeVictory()" style="flex:1;justify-content:center">Fechar</button>'+
     '</div></div>';
-  // Ensure modal is open (mobile fix)
-  const _vm=document.getElementById("newGameModal");
-  if(_vm&&!_vm.classList.contains("open"))_vm.classList.add("open");
+  // Force modal visible - multiple approaches for mobile compatibility
+  vmEl.classList.add("open");
+  vmEl.style.cssText="display:flex!important;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;align-items:flex-end;justify-content:center";
   if(!draw)launchConfetti();
 }
 </script>
