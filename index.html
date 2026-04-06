@@ -1092,10 +1092,9 @@ async function handleGameSubmission(){
     const _t1=[...t1],_t2=[...t2],_t1S=t1S,_t2S=t2S,_sc=[...sc],_date=date;
     await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date:_date,team1:_t1,team2:_t2,result,setScores:_sc},...GH]});
     if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo!",{body:_t1.join(" & ")+" vs "+_t2.join(" & ")+" - "+result});
-    // Show victory FIRST (before resetGameForm destroys the modal DOM)
+    // Reset form state (variables only, not DOM) then show victory
+    selP=[];tDrawn=false;cT1=[];cT2=[];editId=null;
     showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date);
-    // Reset form after victory is shown
-    setTimeout(()=>resetGameForm(),100);
     return;
   }
   resetGameForm();closeModal("newGameModal");
@@ -1104,6 +1103,8 @@ async function handleGameSubmission(){
 
 function resetGameForm(){
   selP=[];tDrawn=false;cT1=[];cT2=[];editId=null;
+  // Only touch DOM if setsContainer exists (modal not replaced by victory screen)
+  if(!document.getElementById("setsContainer"))return;
   const td=document.getElementById("teamsDisplay");if(td)td.style.display="none";
   const mt=document.getElementById("manualTeams");if(mt)mt.style.display="none";
   const ew=document.getElementById("estrangeiroWrap");if(ew)ew.style.display="none";
