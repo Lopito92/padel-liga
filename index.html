@@ -692,13 +692,8 @@ function openModal(id){document.getElementById(id).classList.add("open");}
 function closeModal(id){document.getElementById(id).classList.remove("open");}
 window.closeModal=closeModal;
 window.__closeVictory=function(){
-  const m=document.getElementById('newGameModal');
-  if(m){m.classList.remove('open');m.style.cssText="";}
-  // Restore original modal HTML so next openNewGame works
-  if(m&&_origModalHTML){
-    const inner=m.querySelector(".modal");
-    if(inner){inner.innerHTML=_origModalHTML;bindGameModalButtons();}
-  }
+  const ov=document.getElementById("victoryOverlay");
+  if(ov)ov.style.display="none";
 };
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 
@@ -1134,6 +1129,12 @@ document.getElementById("headerNewGameBtn").onclick=openNewGame;
 // Save original modal HTML for restoration after victory screen
 (function(){const m=document.getElementById("newGameModal");if(m){const i=m.querySelector(".modal");if(i)_origModalHTML=i.innerHTML;}})();
 document.getElementById("btnCloseGameModal").onclick=()=>closeModal("newGameModal");
+document.getElementById("victoryShareBtn").onclick=function(){
+  var txt=window.__vstxt||"";
+  if(navigator.share)navigator.share({title:"Liga BDNC",text:txt}).catch(function(){});
+  else navigator.clipboard.writeText(txt).then(function(){toast("Copiado!");});
+};
+document.getElementById("victoryCloseBtn").onclick=window.__closeVictory;
 document.getElementById("btnSortear").onclick=sortear;
 document.getElementById("btnManual").onclick=toggleManual;
 document.getElementById("btnAddSet").onclick=addSet;
@@ -1377,27 +1378,23 @@ window.__shareV=function(){
 };
 function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
   const draw=t1S===t2S;
-  const win=t1S>t2S?t1:t2,los=t1S>t2S?t2:t1;
+  const win=t1S>t2S?t1:t2, los=t1S>t2S?t2:t1;
   const sets=sc.map(function(s){return s.a+"-"+s.b;}).join(", ");
   window.__vstxt="Liga BDNC\n"+t1.join(" & ")+" vs "+t2.join(" & ")+"\n"+t1S+"-"+t2S+" ("+sets+")\n"+(draw?"Empate!":"Vencedor: "+win.join(" & "))+"\nData: "+date;
-  const vmEl=document.getElementById("newGameModal");
-  if(!vmEl){console.error("newGameModal not found");return;}
-  const inner=vmEl.querySelector(".modal");
-  if(!inner){console.error("modal inner not found");return;}
-  inner.innerHTML=
-    '<div class="modal-handle"></div>'+
-    '<div style="text-align:center;padding:8px">'+
-    '<div style="font-size:60px;margin-bottom:10px">'+(draw?"🤝":"🏆")+'</div>'+
-    '<h2 style="font-family:Bebas Neue,sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px;margin-bottom:10px">'+(draw?"EMPATE!":"PARABÉNS!")+'</h2>'+
-    (!draw?'<p style="font-size:19px;font-weight:700;margin-bottom:4px">'+win.join(" & ")+'</p><p style="color:var(--muted);font-size:13px;margin-bottom:16px">vencem contra '+los.join(" & ")+'</p>':'<p style="color:var(--muted);font-size:14px;margin-bottom:16px">'+t1.join(" & ")+" vs "+t2.join(" & ")+'</p>')+
-    '<div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:22px;font-weight:700">'+t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span></div>'+
-    '<div style="display:flex;gap:10px">'+
-    '<button class="btn btn-primary" onclick="window.__shareV()" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>'+
-    '<button class="btn btn-ghost" onclick="window.__closeVictory()" style="flex:1;justify-content:center">Fechar</button>'+
-    '</div></div>';
-  // Force modal visible - multiple approaches for mobile compatibility
-  vmEl.classList.add("open");
-  vmEl.style.cssText="display:flex!important;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;align-items:flex-end;justify-content:center";
+  
+  // Close the game modal first
+  const gm=document.getElementById("newGameModal");
+  if(gm){gm.classList.remove("open");gm.style.cssText="";}
+  
+  // Show the separate victory overlay
+  const ov=document.getElementById("victoryOverlay");
+  if(!ov)return;
+  document.getElementById("victoryEmoji").textContent=draw?"🤝":"🏆";
+  document.getElementById("victoryTitle").textContent=draw?"EMPATE!":"PARABÉNS!";
+  document.getElementById("victoryWinner").textContent=draw?"":win.join(" & ");
+  document.getElementById("victoryLoser").textContent=draw?t1.join(" & ")+" vs "+t2.join(" & "):"vencem contra "+los.join(" & ");
+  document.getElementById("victoryScore").innerHTML=t1S+"-"+t2S+' <span style="color:var(--muted);font-size:13px;font-weight:400">('+sets+')</span>';
+  ov.style.display="flex";
   if(!draw)launchConfetti();
 }
 </script>
@@ -1415,6 +1412,21 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
     }
   </script>
 
+
+  <!-- Victory Overlay -->
+  <div id="victoryOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9000;align-items:center;justify-content:center;padding:20px">
+    <div style="background:var(--surface);border-radius:20px;padding:32px 24px;max-width:400px;width:100%;text-align:center">
+      <div id="victoryEmoji" style="font-size:64px;margin-bottom:12px">🏆</div>
+      <h2 id="victoryTitle" style="font-family:Bebas Neue,sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px;margin-bottom:10px">PARABÉNS!</h2>
+      <p id="victoryWinner" style="font-size:19px;font-weight:700;margin-bottom:4px"></p>
+      <p id="victoryLoser" style="color:var(--muted);font-size:13px;margin-bottom:16px"></p>
+      <div id="victoryScore" style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:24px;font-size:22px;font-weight:700"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" id="victoryShareBtn" style="flex:1;justify-content:center"><i class="fas fa-share-alt"></i> Partilhar</button>
+        <button class="btn btn-ghost" id="victoryCloseBtn" style="flex:1;justify-content:center">Fechar</button>
+      </div>
+    </div>
+  </div>
   <div id="iosInstallBanner">
     <img src="logo.png" onerror="this.style.display='none'">
     <div class="ios-text">
