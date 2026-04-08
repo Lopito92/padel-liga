@@ -693,7 +693,14 @@ function closeModal(id){document.getElementById(id).classList.remove("open");}
 window.closeModal=closeModal;
 window.__closeVictory=function(){
   const ov=document.getElementById("victoryOverlay");
-  if(ov)ov.style.display="none";
+  if(ov){ov.style.display="none";}
+  // Restore game modal HTML for next game
+  const gm=document.getElementById("newGameModal");
+  if(gm&&_origModalHTML){
+    const inner=gm.querySelector(".modal");
+    if(inner){inner.innerHTML=_origModalHTML;bindGameModalButtons();}
+  }
+  gm.style.display="";
 };
 document.querySelectorAll(".modal-overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");}));
 
