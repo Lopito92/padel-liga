@@ -1085,17 +1085,14 @@ async function handleGameSubmission(){
     toast("Jogo atualizado!");
   }else{
     const _t1=[...t1],_t2=[...t2],_t1S=t1S,_t2S=t2S,_sc=[...sc],_date=date;
-    await setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date:_date,team1:_t1,team2:_t2,result,setScores:_sc},...GH]});
-    if("Notification"in window&&Notification.permission==="granted")new Notification("Novo Jogo!",{body:_t1.join(" & ")+" vs "+_t2.join(" & ")+" - "+result});
-    selP=[];tDrawn=false;cT1=[];cT2=[];editId=null;
-    try{
-      showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date);
-    }catch(e){
-      // Fallback: just close modal and show toast
-      const gm=document.getElementById("newGameModal");
-      if(gm){gm.classList.remove("open");gm.style.cssText="";}
-      toast("Jogo registado! "+(_t1S>_t2S?_t1.join(" & "):_t2.join(" & "))+" vencem!");
+    // Fire save without awaiting - show victory immediately
+    setDoc(doc(db,"data","games"),{list:[{id:Date.now(),date:_date,team1:_t1,team2:_t2,result,setScores:_sc},...GH]})
+      .catch(e=>toast("Erro ao guardar: "+e.message,"error"));
+    if("Notification"in window&&Notification.permission==="granted"){
+      try{new Notification("Novo Jogo!",{body:_t1.join(" & ")+" vs "+_t2.join(" & ")+" - "+result});}catch(e){}
     }
+    selP=[];tDrawn=false;cT1=[];cT2=[];editId=null;
+    showVictoryInModal(_t1,_t2,_t1S,_t2S,_sc,_date);
     return;
   }
   resetGameForm();closeModal("newGameModal");
