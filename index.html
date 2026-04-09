@@ -1417,23 +1417,10 @@ function showVictoryInModal(t1,t2,t1S,t2S,sc,date){
   ov.style.setProperty("display","flex","important");
   if(!draw)launchConfetti();
 }
-</script>
-  <script>
-    // iOS install prompt
-    (function(){
-      var isIos=/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-      var isStandalone=('standalone' in navigator)&&navigator.standalone;
-      if(isIos&&!isStandalone&&!localStorage.getItem('iosBannerDismissed')){
-        setTimeout(function(){var b=document.getElementById('iosInstallBanner');if(b)b.style.display='flex';},3000);
-      }
-    })();
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('./sw.js').catch(function(){});
-    }
-  
+
 // Share ranking as image
 window.__shareRanking=async function(){
-  const rows=document.querySelectorAll("#rankingTable tbody tr");
+  const rows=document.querySelectorAll("#rankingBody tr");
   if(!rows.length){toast("Sem dados para partilhar.","warning");return;}
   
   const canvas=document.createElement("canvas");
@@ -1517,6 +1504,20 @@ window._downloadCanvas=function(canvas){
   a.download="ranking-bdnc.png";
   a.click();
 };
+</script>
+  <script>
+    // iOS install prompt
+    (function(){
+      var isIos=/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+      var isStandalone=('standalone' in navigator)&&navigator.standalone;
+      if(isIos&&!isStandalone&&!localStorage.getItem('iosBannerDismissed')){
+        setTimeout(function(){var b=document.getElementById('iosInstallBanner');if(b)b.style.display='flex';},3000);
+      }
+    })();
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('./sw.js').catch(function(){});
+    }
+  
 </script>
 
 
