@@ -1564,8 +1564,13 @@ function _drawTableCanvas(title, icon, headerCells, rows, colWidths){
 window.__shareDuplas=function(){
   const rows=document.querySelectorAll("#pairsRankingBody tr");
   if(!rows.length){toast("Sem dados.","warning");return;}
-  const data=Array.from(rows).map(r=>Array.from(r.querySelectorAll("td")).map(td=>td.textContent.trim()));
-  const canvas=_drawTableCanvas("DUPLAS","👥",["POS","DUPLA","J","V%","V","D","DS","DG"],[40,160,40,60,40,40,50,50],data);
+  const data=[];
+  rows.forEach(r=>{
+    const cells=r.querySelectorAll("td");
+    if(cells.length)data.push(Array.from(cells).map(td=>td.textContent.trim()));
+  });
+  if(!data.length){toast("Sem dados.","warning");return;}
+  const canvas=_drawTableCanvas("DUPLAS","👥",["POS","DUPLA","J","V%","V","D","DS","DG"],[40,180,40,60,40,40,50,50],data);
   _shareCanvas(canvas,"duplas-bdnc.png");
 };
 
