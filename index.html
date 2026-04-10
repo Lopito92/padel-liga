@@ -239,16 +239,25 @@
       </table></div>
     </div>
     <div class="tab-content" id="tab-duplas">
-      <div class="section-title"><i class="fas fa-users"></i> Ranking por Duplas</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+  <div class="section-title" style="margin-bottom:0"><i class="fas fa-users"></i> Ranking por Duplas</div>
+  <button class="btn btn-ghost" onclick="window.__shareDuplas()" style="padding:8px 12px;font-size:13px;gap:6px"><i class="fas fa-share-alt"></i> Partilhar</button>
+</div>
       <div class="table-wrap"><table>
         <thead><tr><th>Pos</th><th>Dupla</th><th>J</th><th>V%</th><th>V</th><th>E</th><th>D</th><th class="hide-mobile">S+</th><th class="hide-mobile">S-</th><th>DS</th><th class="hide-mobile">G+</th><th class="hide-mobile">G-</th><th>DG</th><th class="hide-mobile">Forma</th></tr></thead>
         <tbody id="pairsRankingBody"></tbody>
       </table></div>
     </div>
     <div class="tab-content" id="tab-confrontos">
-      <div class="section-title"><i class="fas fa-crosshairs"></i> Confrontos Individuais</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+  <div class="section-title" style="margin-bottom:0"><i class="fas fa-crosshairs"></i> Confrontos Individuais</div>
+  <button class="btn btn-ghost" onclick="window.__shareConfrontos()" style="padding:8px 12px;font-size:13px;gap:6px"><i class="fas fa-share-alt"></i> Partilhar</button>
+</div>
       <div class="table-wrap"><table><thead id="h2hHeader"></thead><tbody id="h2hBody"></tbody></table></div>
-      <div class="section-title"><i class="fas fa-shield-alt"></i> Confrontos por Duplas</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+  <div class="section-title" style="margin-bottom:0"><i class="fas fa-shield-alt"></i> Confrontos por Duplas</div>
+  <button class="btn btn-ghost" onclick="window.__shareConfrontosDuplas()" style="padding:8px 12px;font-size:13px;gap:6px"><i class="fas fa-share-alt"></i> Partilhar</button>
+</div>
       <div class="table-wrap"><table><thead id="h2hPairsHeader"></thead><tbody id="h2hPairsBody"></tbody></table></div>
     </div>
     <div class="tab-content" id="tab-historico">
@@ -1503,6 +1512,85 @@ window._downloadCanvas=function(canvas){
   a.href=canvas.toDataURL("image/png");
   a.download="ranking-bdnc.png";
   a.click();
+};
+
+// ── Share helpers ──
+function _shareCanvas(canvas, filename){
+  canvas.toBlob(async blob=>{
+    if(!blob)return;
+    const file=new File([blob],filename,{type:"image/png"});
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:"Liga BDNC"});}
+      catch(e){if(e.name!=="AbortError")_downloadCanvas(canvas);}
+    } else {_downloadCanvas(canvas);}
+  },"image/png");
+}
+
+function _drawTableCanvas(title, icon, headerCells, rows, colWidths){
+  const dpr=window.devicePixelRatio||1;
+  const W=colWidths.reduce((a,b)=>a+b,0)+40;
+  const H=80+rows.length*44+40;
+  const canvas=document.createElement("canvas");
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  const ctx=canvas.getContext("2d");
+  ctx.scale(dpr,dpr);
+  ctx.fillStyle="#0E0E0E"; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#C9A84C"; ctx.font="bold 20px sans-serif";
+  ctx.fillText(icon+" LIGA BDNC - "+title,20,38);
+  ctx.fillStyle="#2E2E2E"; ctx.fillRect(0,48,W,2);
+  // Header
+  ctx.font="11px sans-serif"; ctx.fillStyle="#888";
+  let x=20;
+  headerCells.forEach((h,i)=>{ctx.fillText(h,x,68);x+=colWidths[i];});
+  // Rows
+  rows.forEach((row,ri)=>{
+    const y=86+ri*44;
+    ctx.fillStyle=ri%2===0?"#161616":"#1A1A1A";
+    ctx.fillRect(0,y-14,W,44);
+    x=20;
+    row.forEach((cell,ci)=>{
+      ctx.font=ci<=1?"bold 13px sans-serif":"13px sans-serif";
+      ctx.fillStyle=ci===0?"#C9A84C":ci===3?"#C9A84C":ci===row.length-1&&row[row.length-1].includes("€")?"#85bb65":"#F0F0F0";
+      ctx.fillText(String(cell).substring(0,18),x,y+4);
+      x+=colWidths[ci];
+    });
+    ctx.fillStyle="#2E2E2E"; ctx.fillRect(0,y+22,W,1);
+  });
+  ctx.fillStyle="#555"; ctx.font="10px sans-serif";
+  ctx.fillText("liga-bdnc • "+new Date().toLocaleDateString("pt-PT"),20,H-10);
+  return canvas;
+}
+
+window.__shareDuplas=function(){
+  const rows=document.querySelectorAll("#pairsRankingBody tr");
+  if(!rows.length){toast("Sem dados.","warning");return;}
+  const data=Array.from(rows).map(r=>Array.from(r.querySelectorAll("td")).map(td=>td.textContent.trim()));
+  const canvas=_drawTableCanvas("DUPLAS","👥",["POS","DUPLA","J","V%","V","D","DS","DG"],[40,160,40,60,40,40,50,50],data);
+  _shareCanvas(canvas,"duplas-bdnc.png");
+};
+
+window.__shareConfrontos=function(){
+  const hdr=document.querySelectorAll("#h2hHeader th");
+  const rows=document.querySelectorAll("#h2hBody tr");
+  if(!rows.length){toast("Sem dados.","warning");return;}
+  const headers=Array.from(hdr).map(th=>th.textContent.trim());
+  const data=Array.from(rows).map(r=>Array.from(r.querySelectorAll("th,td")).map(td=>td.textContent.trim()));
+  const n=headers.length;
+  const colW=n>0?[80,...Array(n-1).fill(Math.min(60,Math.floor(480/n)))]:[];
+  const canvas=_drawTableCanvas("CONFRONTOS","⚔️",headers,data,colW.length?colW:[80,60,60,60,60]);
+  _shareCanvas(canvas,"confrontos-bdnc.png");
+};
+
+window.__shareConfrontosDuplas=function(){
+  const hdr=document.querySelectorAll("#h2hPairsHeader th");
+  const rows=document.querySelectorAll("#h2hPairsBody tr");
+  if(!rows.length){toast("Sem dados.","warning");return;}
+  const headers=Array.from(hdr).map(th=>th.textContent.trim());
+  const data=Array.from(rows).map(r=>Array.from(r.querySelectorAll("th,td")).map(td=>td.textContent.trim()));
+  const n=headers.length;
+  const colW=n>0?[100,...Array(n-1).fill(Math.min(70,Math.floor(520/n)))]:[];
+  const canvas=_drawTableCanvas("CONFRONTOS DUPLAS","🛡️",headers,data,colW.length?colW:[100,70,70,70]);
+  _shareCanvas(canvas,"confrontos-duplas-bdnc.png");
 };
 </script>
   <script>
