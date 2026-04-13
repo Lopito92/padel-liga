@@ -1548,9 +1548,10 @@ function _drawTableCanvas(title, icon, headerCells, rows, colWidths){
     ctx.fillStyle=ri%2===0?"#161616":"#1A1A1A";
     ctx.fillRect(0,y-14,W,44);
     x=20;
-    row.forEach((cell,ci)=>{
+    const rowArr=Array.isArray(row)?row:Array.from(row);
+    rowArr.forEach((cell,ci)=>{
       ctx.font=ci<=1?"bold 13px sans-serif":"13px sans-serif";
-      ctx.fillStyle=ci===0?"#C9A84C":ci===3?"#C9A84C":ci===row.length-1&&row[row.length-1].includes("€")?"#85bb65":"#F0F0F0";
+      ctx.fillStyle=ci===0?"#C9A84C":ci===3?"#C9A84C":ci===rowArr.length-1&&String(rowArr[rowArr.length-1]).includes("€")?"#85bb65":"#F0F0F0";
       ctx.fillText(String(cell).substring(0,18),x,y+4);
       x+=colWidths[ci];
     });
