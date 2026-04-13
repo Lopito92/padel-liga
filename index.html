@@ -1565,13 +1565,19 @@ function _drawTableCanvas(title, icon, headerCells, rows, colWidths){
 window.__shareDuplas=function(){
   const rows=document.querySelectorAll("#pairsRankingBody tr");
   if(!rows.length){toast("Sem dados.","warning");return;}
+  // Only pick cols: POS(0), DUPLA(1), J(2), V%(3), V(4), E(5), D(6), DS(9), DG(12)
+  const idxs=[0,1,2,3,4,5,6,9,12];
+  const hdrs=["POS","DUPLA","J","V%","V","E","D","DS","DG"];
+  const widths=[36,160,36,56,36,36,36,50,50];
   const data=[];
   rows.forEach(r=>{
     const cells=r.querySelectorAll("td");
-    if(cells.length)data.push(Array.from(cells).map(td=>td.textContent.trim()));
+    if(cells.length){
+      data.push(idxs.map(i=>cells[i]?cells[i].textContent.trim():""));
+    }
   });
   if(!data.length){toast("Sem dados.","warning");return;}
-  const canvas=_drawTableCanvas("DUPLAS","👥",["POS","DUPLA","J","V%","V","D","DS","DG"],[40,180,40,60,40,40,50,50],data);
+  const canvas=_drawTableCanvas("DUPLAS","👥",hdrs,data,widths);
   _shareCanvas(canvas,"duplas-bdnc.png");
 };
 
