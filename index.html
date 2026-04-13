@@ -168,7 +168,8 @@
     <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="email@exemplo.com" autocomplete="email"></div>
     <div class="form-group"><label>Palavra-passe</label><input type="password" id="loginPassword" placeholder="..." autocomplete="current-password"></div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px" id="btnLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-    <div style="text-align:center;margin-top:16px"><span style="color:var(--muted);font-size:13px">Sem conta? </span><span style="color:var(--gold);font-size:13px;cursor:pointer;font-weight:600" id="btnToggleRegister">Registar</span></div>
+    <div style="text-align:center;margin-top:12px"><span style="color:var(--muted);font-size:12px;cursor:pointer" id="btnForgotPassword">Esqueceste a palavra-passe?</span></div>
+    <div style="text-align:center;margin-top:10px"><span style="color:var(--muted);font-size:13px">Sem conta? </span><span style="color:var(--gold);font-size:13px;cursor:pointer;font-weight:600" id="btnToggleRegister">Registar</span></div>
     <div id="registerSection" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
       <div class="form-group"><label>Nome</label><input type="text" id="registerName" placeholder="O teu nome"></div>
       <button class="btn btn-ghost" style="width:100%;justify-content:center" id="btnRegister"><i class="fas fa-user-plus"></i> Criar conta</button>
@@ -383,7 +384,7 @@
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc,updateDoc,onSnapshot,collection,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const FC={apiKey:"AIzaSyBTVg3VDNsF6WPsdNztfn66b1iI77-HQgo",authDomain:"liga-bdnc.firebaseapp.com",projectId:"liga-bdnc",storageBucket:"liga-bdnc.firebasestorage.app",messagingSenderId:"309610016294",appId:"1:309610016294:web:21c37345dd831e24ea40e7"};
@@ -744,6 +745,34 @@ document.getElementById("btnConfirmCancel").onclick=()=>{document.getElementById
 document.getElementById("btnConfirmOk").onclick=()=>{if(confCB)confCB();document.getElementById("confirmOverlay").classList.remove("open");confCB=null;};
 
 // Auth
+document.getElementById("btnForgotPassword").onclick=async()=>{
+  const email=document.getElementById("loginEmail").value.trim();
+  if(!email){
+    // Show inline input for email
+    const el=document.getElementById("btnForgotPassword");
+    el.innerHTML='<input type="email" id="resetEmailInput" placeholder="O teu email" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;width:180px;margin-right:8px"><span style="color:var(--gold);font-weight:600;cursor:pointer" id="btnSendReset">Enviar</span>';
+    document.getElementById("btnSendReset").onclick=async()=>{
+      const em=document.getElementById("resetEmailInput").value.trim();
+      if(!em){return;}
+      try{
+        await sendPasswordResetEmail(auth,em);
+        document.getElementById("btnForgotPassword").innerHTML="Email enviado! Verifica a tua caixa.";
+        document.getElementById("btnForgotPassword").style.color="var(--green)";
+      }catch(e){
+        document.getElementById("btnForgotPassword").textContent="Erro: "+e.message;
+        document.getElementById("btnForgotPassword").style.color="var(--red)";
+      }
+    };
+    return;
+  }
+  try{
+    await sendPasswordResetEmail(auth,email);
+    toast("Email de recuperação enviado!");
+  }catch(e){
+    toast("Erro: "+e.message,"error");
+  }
+};
+
 document.getElementById("btnLogin").onclick=async()=>{
   const e=document.getElementById("loginEmail").value.trim(),p=document.getElementById("loginPassword").value,er=document.getElementById("loginError");
   er.classList.remove("visible");
